@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MOMENT — социальная геосеть</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#F5F4EF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MOMENT">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{--bg:#F5F4EF;--bg2:#E9E8E1;--tx:#171813;--ac:#D6FF38;--co:#FF6548;--mu:#5a5b52;--ln:rgba(23,24,19,.18);--z:1;color-scheme:light;padding-top:env(safe-area-inset-top,0px)}
+:root[data-theme=dark]{--bg:#171813;--bg2:#24251E;--tx:#F5F4EF;--mu:#9a9b90;--ln:rgba(245,244,239,.2);color-scheme:dark}
+body{font-variant-numeric:tabular-nums;background:var(--bg);color:var(--tx);font:500 16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%;overflow-x:hidden}
+.tt *{transition:background-color .5s,color .5s,border-color .5s!important}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--co);outline-offset:2px}
+.lab{font:600 12px/1.3 Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.hd{font-size:clamp(48px,11vw,132px);line-height:.88;letter-spacing:-.05em;font-weight:800}
+.mu{color:var(--mu);font-size:14px;font-weight:500}.row{display:flex;align-items:center;gap:8px}.grow{flex:1;min-width:0}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--ln);background:var(--bg);position:sticky;top:env(safe-area-inset-top,0px);z-index:30}
+.wm{font-size:20px;font-weight:800;letter-spacing:-.04em;margin-right:auto}
+.wm i{display:inline-block;width:9px;height:9px;background:var(--ac);border:1.5px solid var(--tx);border-radius:50%;margin-left:3px}
+.in{flex:1 1 150px;min-width:0;background:none;border:0;border-bottom:1.5px solid var(--tx);padding:8px 0;outline:0;border-radius:0}
+.in:focus{border-color:var(--co)}
+.ib{position:relative;display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:8px;color:var(--mu);transition:background .2s,color .2s,transform .15s}
+.ib:hover{color:var(--tx)}.ib:active{transform:scale(.9)}.ib.on{background:var(--ac);color:#171813}
+.top .ib{color:var(--tx)}
+.cbtn{background:var(--ac);color:#171813;border:1.5px solid var(--tx);padding:8px 16px;font-weight:800;transition:transform .15s,background .2s}
+.cbtn:hover{background:var(--tx);color:var(--ac)}.cbtn:active{transform:translate(2px,2px)}
+.bdg{position:absolute;top:2px;right:0;width:9px;height:9px;border-radius:50%;background:var(--co)}
+.rel{position:relative}
+.pop{position:absolute;right:0;top:46px;width:min(320px,88vw);background:var(--bg);border:1.5px solid var(--tx);padding:6px 14px;animation:pp .3s cubic-bezier(.2,.7,.2,1) both;transform-origin:top right}
+@keyframes pp{from{opacity:0;transform:scale(.94);filter:blur(5px)}}
+.pop p{padding:10px 0;font-size:14px}.pop p+p{border-top:1px solid var(--ln)}
+.strip{display:flex;gap:6px 22px;align-items:center;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--ln);font:600 12px Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em}
+.strip em{font-style:normal;color:var(--co);margin-left:auto}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:16px}
+.eq i{width:3px;height:100%;background:var(--tx);transform-origin:bottom;animation:eq 1.1s ease-in-out infinite alternate;animation-delay:calc(var(--d)*-.17s)}
+@keyframes eq{from{transform:scaleY(.15)}to{transform:scaleY(1)}}
+.rail{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;overflow-x:auto;scrollbar-width:none;background:var(--bg);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom,0px)}
+.rail::-webkit-scrollbar{display:none}
+.rail button{flex:none;height:52px;padding:0 18px;background:none;border:0;font-weight:600;color:var(--mu);transition:background .3s,color .3s}
+.rail button.on{background:var(--ac);color:#171813}
+.main{padding-bottom:calc(128px + env(safe-area-inset-bottom,0px))}
+.wipe{position:fixed;inset:0;z-index:40;background:var(--ac);pointer-events:none;transform:translateX(-101%);animation:wp .65s cubic-bezier(.7,0,.2,1)}
+@keyframes wp{40%{transform:translateX(0)}to{transform:translateX(101%)}}
+.pg{animation:pgi .5s .22s both}
+@keyframes pgi{from{opacity:0;transform:translateY(14px)}}
+.st{animation:up .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--n,0)*55ms + .25s)}
+@keyframes up{from{opacity:0;transform:translateY(12px)}}
+.home{display:grid;grid-template-columns:minmax(0,1fr)}.pan,.main,.fl{min-width:0}
+.map{position:relative;overflow:hidden;height:52vh;min-height:320px;border-bottom:1px solid var(--ln);background:var(--bg)}
+.map.big{height:62vh}
+.lay{position:absolute;inset:0;transform-origin:0 0;transition:transform 1s cubic-bezier(.7,0,.2,1);background:linear-gradient(90deg,var(--ln) calc(1px/var(--z)),transparent 0) 0 0/8.3333% 100%,linear-gradient(var(--ln) calc(1px/var(--z)),transparent 0) 0 0/100% 16.6667%}
+.lay svg{position:absolute;inset:0;width:100%;height:100%}.lay path{fill:var(--bg2)}
+.pt{position:absolute;transform:translate(-6px,-6px) scale(calc(1/var(--z)));transform-origin:6px 6px;background:none;border:0;padding:0;display:flex;align-items:center;gap:6px;z-index:1}
+.pt i{position:relative;width:12px;height:12px;background:var(--ac);border:1.5px solid var(--tx);border-radius:50%;transition:background .3s}
+.pt i::after{content:"";position:absolute;inset:-1.5px;border:1.5px solid var(--tx);border-radius:50%;animation:pl 2.2s infinite}
+@keyframes pl{to{transform:scale(3);opacity:0}}
+.pt span{font:600 12px Inter,system-ui,sans-serif;background:var(--bg);padding:1px 5px;border:1px solid var(--ln);white-space:nowrap}
+.pt.on i{background:var(--co)}.pt.on{z-index:2}
+.rgs{position:absolute;left:0;bottom:0;display:flex;background:var(--bg);border-top:1px solid var(--ln);border-right:1px solid var(--ln);z-index:3}
+.rgs button{background:none;border:0;padding:8px 14px;font:600 12px Inter,system-ui,sans-serif;text-transform:uppercase;color:var(--mu);transition:background .25s,color .25s}
+.rgs .on{background:var(--tx);color:var(--bg)}
+.pan{padding:16px}
+.pan>.lab{margin-bottom:6px}
+.post{padding:14px 0;border-top:1px solid var(--ln)}
+.post.pick{border-top:3px solid var(--ac)}
+.post .tx{margin:6px 0 8px;font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.01em}
+.chip{font:600 12px Inter,system-ui,sans-serif;padding:2px 8px;border:1px solid var(--co);color:var(--co)}
+.cms{display:grid;gap:8px;padding:10px 0}
+.cf{display:flex;gap:10px}
+.bu{position:absolute;left:18px;top:50%;pointer-events:none}
+.bu i{position:absolute;width:5px;height:5px;margin:-2px;background:var(--co);transform:rotate(var(--a));animation:bu .6s ease-out forwards}
+@keyframes bu{to{transform:rotate(var(--a)) translateY(-26px);opacity:0}}
+.sk{background:linear-gradient(90deg,var(--bg2) 25%,var(--ln) 50%,var(--bg2) 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.pgx{padding:24px 16px}
+.lead{max-width:34ch;margin:16px 0 28px;color:var(--mu)}
+.mos{display:grid;gap:0;border-top:1px solid var(--ln)}
+.tile{padding:20px 16px;border-bottom:1px solid var(--ln);min-height:170px;display:flex;flex-direction:column;justify-content:space-between;transition:background .3s,color .3s}
+.tile:hover{background:var(--bg2)}
+.tile.a{background:var(--ac);color:#171813}.tile.a .lab,.tile.a .mu{color:#171813}
+.tile.d{background:var(--tx);color:var(--bg)}.tile.d .lab{color:var(--bg)}
+.tile h3{font-size:clamp(32px,6vw,64px);line-height:.95;letter-spacing:-.04em;font-weight:800}
+.tile h3.sm{font-size:30px}
+.tbtn{background:none;border:1.5px solid currentColor;padding:6px 12px;font-weight:600;transition:background .2s,color .2s}
+.tbtn.on{background:var(--tx);color:var(--bg)}.tile.a .tbtn.on{background:#171813;color:var(--ac)}
+.seg{display:inline-flex;border:1.5px solid var(--tx)}
+.seg button{background:none;border:0;padding:7px 14px;font-weight:600;transition:background .25s,color .25s}
+.seg .on{background:var(--tx);color:var(--bg)}
+.radar{position:relative;width:min(100%,380px);aspect-ratio:1;margin:20px auto;border:1px solid var(--ln);border-radius:50%}
+.radar::before,.radar::after{content:"";position:absolute;border:1px solid var(--ln);border-radius:50%;inset:25%}.radar::after{inset:calc(50% - 4px);background:var(--tx);border:0}
+.dot{position:absolute;width:12px;height:12px;margin:-6px;background:var(--ac);border:1.5px solid var(--tx);border-radius:50%;transition:left .7s cubic-bezier(.7,0,.2,1),top .7s cubic-bezier(.7,0,.2,1)}
+.idx{list-style:none;padding:0}
+.idx button{display:flex;justify-content:space-between;width:100%;padding:12px 0;background:none;border:0;border-top:1px solid var(--ln);font-size:20px;font-weight:600;text-align:left;transition:padding .25s}
+.idx button:hover,.idx .on button{padding-left:10px;background:var(--ac);color:#171813}
+.bigc{font-size:clamp(44px,12vw,96px);font-weight:800;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--ln);margin:12px 0}.bar i{display:block;height:100%;background:var(--co);transition:width 1s linear}
+.sw{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;border-top:1px solid var(--ln);padding:12px 0;text-align:left}
+.sw i{width:46px;height:24px;border:1.5px solid var(--tx);position:relative}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;background:var(--tx);transition:transform .3s cubic-bezier(.7,0,.2,1),background .3s}
+.sw.on i::after{transform:translateX(22px);background:var(--co)}
+.pc{aspect-ratio:3/2;padding:14px;display:flex;flex-direction:column;justify-content:space-between;border:1.5px dashed var(--ln);background:none;text-align:left;transition:transform .25s}
+.pc.on{border:1.5px solid var(--tx);background:var(--bg2)}.pc:hover{transform:rotate(-1.2deg)}
+.pc h3{font-size:30px;letter-spacing:-.03em;line-height:1}
+.pcs{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.vt{writing-mode:vertical-rl;transform:rotate(180deg)}
+.nums{display:flex;gap:28px;margin:20px 0}.nums b{display:block;font-size:44px;letter-spacing:-.04em;line-height:1}
+.ovl{position:fixed;inset:0;z-index:50;background:rgba(23,24,19,.5);animation:fi .3s both}
+@keyframes fi{from{opacity:0}}
+.sheet{position:absolute;right:0;top:0;bottom:0;width:min(520px,100%);background:var(--bg);padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));overflow:auto;animation:sl .5s cubic-bezier(.7,0,.2,1) both}
+@keyframes sl{from{transform:translateX(100%)}}
+label.f{display:grid;gap:4px;margin:16px 0}
+textarea.in{min-height:90px;resize:vertical;border:1.5px solid var(--tx);padding:10px}
+select.in{border:1.5px solid var(--tx);padding:8px;background:var(--bg)}
+.map{touch-action:none;cursor:grab}.map.dr{cursor:grabbing}.map.dr .lay{transition:none}
+.zm{position:absolute;right:0;top:0;z-index:3;display:flex;flex-direction:column;background:var(--bg);border-left:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+.zm button{width:40px;height:40px;background:none;border:0;border-bottom:1px solid var(--ln);font-size:20px}.zm button:last-child{border:0}
+.mq{position:absolute;left:0;top:0;z-index:3;display:flex;background:var(--bg);border-right:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+.mq input{border:0;background:none;padding:10px 12px;width:150px;outline:0}.mq button{background:var(--ac);color:#171813;border:0;padding:0 12px;font-weight:600}
+.mmsg{position:absolute;left:0;top:41px;z-index:3;background:var(--bg);padding:3px 10px;border-right:1px solid var(--ln)}
+.rgs{max-width:calc(100% - 40px);overflow-x:auto;scrollbar-width:none}.rgs button{white-space:nowrap}
+.pt.cl{transform:translate(-14px,-14px) scale(calc(1/var(--z)));transform-origin:14px 14px}
+.pt.cl i{width:28px;height:28px;display:grid;place-items:center;background:var(--tx);color:var(--bg);font-size:12px;font-weight:800;font-style:normal}
+.me{position:absolute;width:12px;height:12px;margin:-6px;border:2px solid var(--co);border-radius:50%;transform:scale(calc(1/var(--z)))}
+.fl{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:8px 0;scrollbar-width:none}
+.fc{flex:none;background:none;border:1px solid var(--ln);padding:5px 12px;font-size:12px;transition:background .2s,color .2s}.fc.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}.fc:focus-visible,.tbtn:focus-visible{outline-color:var(--co)}
+.fl .seg{flex:none;margin-left:auto}.fl .seg button{padding:4px 10px;font-size:12px}
+.ph{display:block;max-width:100%;max-height:340px;object-fit:cover;margin:8px 0}
+.au{background:none;border:0;padding:0;font-weight:800;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--ac);text-decoration-thickness:3px}
+.cbtn.on{background:none}
+.in,textarea.in,select.in{border:1.5px solid var(--ln);border-radius:14px;padding:11px 14px;background:var(--bg2)}.in:focus{border-color:var(--tx)}
+.ib,.cbtn,.tbtn,.fc,.seg,.seg button,.rail button,.chip{border-radius:999px}
+.top .ib{background:var(--bg2)}.cbtn{padding:10px 20px}
+.cbtn:active,.ib:active,.fc:active,.tbtn:active{transform:scale(.95)}
+.tile,.pc{border:1px solid var(--ln);border-radius:22px;transition:transform .3s cubic-bezier(.2,.7,.2,1),background .3s}.tile:hover{transform:translate(var(--mx,0px),calc(var(--my,0px) - 3px))}.tile,.pc{transform:translate(var(--mx,0px),var(--my,0px))}
+.mos{gap:12px;border:0;padding-top:4px}
+.pop{border:1px solid var(--ln);border-radius:20px}.sheet{border-radius:24px 0 0 24px}
+.rail{border-radius:22px 22px 0 0}.rail button.on{margin:6px 4px;height:40px}
+.sw i,.bar,.bar i{border-radius:999px}.sw i::after{border-radius:50%}
+.ph{border-radius:16px}.sk{border-radius:12px}.pt span{border-radius:8px}.idx button{border-radius:14px}
+.mq{left:10px;top:10px;border:1px solid var(--ln);border-radius:14px;overflow:hidden}
+.zm{right:10px;top:10px;border:1px solid var(--ln);border-radius:14px;overflow:hidden}
+.rgs{left:10px;bottom:10px;border:1px solid var(--ln);border-radius:14px;overflow:hidden;max-width:calc(100% - 20px)}
+.mmsg{left:10px;top:56px;border-radius:8px}
+@media(min-width:1000px){.rail{border-radius:0}.rail button.on{margin:0;height:auto}}
+.ach{display:inline-block;margin:0 8px 8px 0;padding:6px 14px;border-radius:999px;border:1.5px dashed var(--ln);color:var(--mu);font-weight:600;transition:background .3s,color .3s}
+.ach.on{border:1.5px solid var(--tx);background:var(--ac);color:#171813}
+.pc h3,.tile h3{overflow-wrap:anywhere;hyphens:auto}.pc h3{font-size:clamp(18px,5vw,28px)}.tile h3.sm{font-size:clamp(22px,5vw,30px)}
+.nums{flex-wrap:wrap;gap:14px 26px}.row{min-width:0}.ib{flex:none}.au{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pop{position:fixed;left:auto;right:12px;top:calc(env(safe-area-inset-top,0px) + 62px);width:min(340px,calc(100vw - 24px))}
+.rng{width:100%;accent-color:var(--tx)}
+@media(max-width:699px){.top .in{order:9;flex:1 1 100%}.strip{flex-wrap:nowrap;overflow:hidden;white-space:nowrap}.strip span:nth-child(2){display:none}.strip{gap:6px 14px}.isl b{display:none}}
+@media(min-width:700px){.mos .tile.f{grid-column:span 6}}
+.isl{position:fixed;left:50%;bottom:calc(70px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:25;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:9px 14px;border:1px solid rgba(245,244,239,.25);border-radius:999px;background:#171813;color:#F5F4EF;font-weight:600;white-space:nowrap;animation:isl .6s cubic-bezier(.3,1.4,.5,1) both}
+.isl span{font-size:12px;color:var(--ac)}.isl b{overflow:hidden;text-overflow:ellipsis}
+@keyframes isl{from{transform:translateX(-50%) scale(.4);opacity:0}}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);z-index:60;background:var(--ac);color:#171813;border-radius:999px;padding:10px 18px;font-weight:700;max-width:calc(100vw - 24px);animation:ts 3.2s ease both}
+@keyframes ts{0%{opacity:0;transform:translate(-50%,-14px)}10%,85%{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-8px)}}
+@media(min-width:1000px){.isl{left:calc(50% + 28px);bottom:24px}}
+.lz .pt:not(.on) span{display:none}
+.hd.grow{min-width:max-content}
+.av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#171813;background:var(--ac);border:1.5px solid var(--tx)}
+.ph{animation:rev 1s cubic-bezier(.2,.7,.2,1) both}
+.post .row{flex-wrap:wrap;row-gap:2px}
+.evm{position:absolute;width:12px;height:12px;margin:-6px;background:var(--co);border:1.5px solid var(--tx);transform:rotate(45deg) scale(calc(1/var(--z)))}
+.ba{position:relative}.ba .ba-a{position:absolute;inset:0;width:100%;height:100%;animation:none}.ba input{position:absolute;left:8px;right:8px;bottom:8px;width:calc(100% - 16px);accent-color:var(--ac)}
+.pcov{height:120px;border-radius:20px;background:repeating-linear-gradient(135deg,var(--ac) 0 14px,var(--bg2) 14px 28px);animation:cvm 6s linear infinite}
+@keyframes cvm{to{background-position:40px 0}}
+.avi{width:84px;height:84px;border-radius:50%;object-fit:cover;border:4px solid var(--bg);display:block}.av.big{width:84px;height:84px;font-size:32px;border:4px solid var(--bg)}
+img.av{object-fit:cover}.pfa{margin:-42px 0 10px 16px}
+.hd{transform:translateY(calc(var(--sy,0)*-.12px))}
+.mo{display:inline-flex;animation:mo .45s cubic-bezier(.3,1.4,.5,1)}@keyframes mo{from{transform:rotate(-90deg) scale(.4);opacity:0}}
+.trl{pointer-events:none}
+label.f,.f>*{min-width:0;max-width:100%}input[type=file]{width:100%;font-size:13px}
+.spl{position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;flex-direction:column;justify-content:flex-end;padding:20px;animation:so .5s 1.3s forwards}
+@keyframes so{to{opacity:0;visibility:hidden}}
+.spl .hd{font-variant-numeric:tabular-nums}
+.spl .bar{height:8px;margin:14px 0 0}.spl .bar i{width:0;background:var(--ac);border-right:3px solid var(--tx);animation:ld 1.2s cubic-bezier(.7,0,.2,1) forwards}
+@keyframes ld{to{width:100%}}
+@media(min-width:700px){
+.home{grid-template-columns:minmax(0,1fr) 300px;height:calc(100dvh - var(--hh,104px))}.map{height:auto}.pan{overflow:auto;border-left:1px solid var(--ln)}
+.mos{grid-template-columns:repeat(6,1fr)}.tile{grid-column:span 3;border-right:1px solid var(--ln)}.tile.w{grid-column:span 4;min-height:300px}.tile.n{grid-column:span 2}
+.pcs{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){
+.rail{inset:0 auto 0 0;width:56px;flex-direction:column;overflow:visible;border-top:0;border-right:1px solid var(--ln);padding:0}
+.rail button{flex:1;padding:0;writing-mode:vertical-rl;transform:rotate(180deg);font-size:14px}
+.main{margin-left:56px;padding-bottom:0}.top{padding-left:24px}.wipe{left:56px}
+.home{grid-template-columns:minmax(0,1fr) 340px}.glob{display:grid;grid-template-columns:minmax(0,1fr) 300px}
+.pgx{padding:40px 48px}.pcs{grid-template-columns:repeat(4,1fr)}}
+:root[data-calm] *,:root[data-calm] *::before,:root[data-calm] *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+
+.authbox{position:fixed;inset:0;z-index:120;background:rgba(23,24,19,.62);display:grid;place-items:center;padding:16px;backdrop-filter:blur(8px)}
+.authcard{width:min(440px,100%);max-height:92dvh;overflow:auto;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:26px;padding:24px;box-shadow:0 24px 80px #0003}
+.authcard .hd{font-size:clamp(42px,10vw,72px);margin:14px 0}.autherr{color:var(--co);font-size:13px;margin:10px 0}.authok{background:var(--ac);color:#171813;border-radius:14px;padding:12px;margin:12px 0;font-size:14px}
+.userchip{display:flex;align-items:center;gap:7px;border:1px solid var(--ln);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;max-width:160px;overflow:hidden}
+.userchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:520px){.authcard{padding:20px}.userchip{max-width:100px}}
+
+/* MOMENT Messenger */
+.chatpage{padding:16px;min-height:calc(100dvh - 170px)}
+.chathead{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.chatlayout{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:14px;min-height:65vh}
+.chatpanel{border:1px solid var(--ln);border-radius:22px;background:var(--bg);min-width:0;overflow:hidden}
+.chatlist{display:flex;flex-direction:column;max-height:72vh;overflow:auto}
+.chatlisttop{padding:14px;border-bottom:1px solid var(--ln);display:grid;gap:10px}
+.chatitem{display:flex;align-items:center;gap:10px;padding:12px 14px;border:0;border-bottom:1px solid var(--ln);background:none;text-align:left;width:100%;min-width:0}
+.chatitem:hover,.chatitem.on{background:var(--bg2)}
+.chatitem.on{box-shadow:inset 3px 0 var(--ac)}
+.chatitem .chatpreview{min-width:0;flex:1}
+.chatpreview b,.chatpreview span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chatpreview span{font-size:12px;color:var(--mu)}
+.chatavatar{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--ac);color:#171813;font-weight:800;overflow:hidden}
+.chatavatar img{width:100%;height:100%;object-fit:cover}
+.chatroom{display:flex;flex-direction:column;min-height:65vh;max-height:72vh}
+.chatroomhead{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--ln)}
+.chatmessages{padding:16px;overflow:auto;display:flex;flex:1;flex-direction:column;gap:10px;min-height:240px}
+.chatempty{margin:auto;text-align:center;max-width:320px;color:var(--mu);padding:24px}
+.chatbubble{max-width:min(78%,560px);padding:10px 12px;border:1px solid var(--ln);border-radius:16px;background:var(--bg2);align-self:flex-start;overflow-wrap:anywhere}
+.chatbubble.mine{align-self:flex-end;background:var(--ac);color:#171813;border-color:var(--tx)}
+.chatbubble .chatmeta{display:flex;align-items:center;gap:8px;font-size:11px;opacity:.7;margin-top:5px}
+.chatbubble img,.chatbubble video{display:block;max-width:min(100%,360px);max-height:280px;border-radius:12px;margin:4px 0}
+.chatbubble audio{width:min(100%,300px);max-width:100%}
+.chattools{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.chattools button{font-size:12px;border:1px solid var(--ln);border-radius:999px;padding:3px 8px;background:var(--bg)}
+.chatbubble.mine .chattools button{background:rgba(255,255,255,.5);color:#171813}
+.chatcomposer{padding:12px;border-top:1px solid var(--ln);display:flex;gap:8px;align-items:flex-end}
+.chatcomposer textarea{flex:1;min-width:0;min-height:44px;max-height:120px;resize:vertical;border:1px solid var(--ln);border-radius:16px;background:var(--bg2);padding:10px 12px;color:var(--tx)}
+.chatcomposer .ib{background:var(--bg2);border-radius:50%;width:42px;height:42px;justify-content:center}
+.chatsearchresults{display:grid;gap:4px;max-height:220px;overflow:auto}
+.chatsearchresults button{display:flex;align-items:center;gap:8px;text-align:left;border:0;background:none;padding:8px;border-radius:12px}
+.chatsearchresults button:hover{background:var(--bg2)}
+.chatback{display:none}
+.chatbadge{font-size:10px;border-radius:99px;background:var(--co);color:#fff;padding:2px 7px}
+@media(max-width:760px){.chatpage{padding:10px}.chatlayout{display:block;min-height:0}.chatlist{max-height:none}.chatroom{min-height:calc(100dvh - 210px);max-height:calc(100dvh - 160px)}.chatlayout.roomopen .chatlist{display:none}.chatlayout:not(.roomopen) .chatroom{display:none}.chatback{display:inline-flex}.chatbubble{max-width:88%}}
+
+</style>
+</head>
+<body>
+<div id="r"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script>
+const {useState,useEffect}=React;
+const SUPABASE_URL='https://pwlzgjmcbutkshjvweec.supabase.co';
+const SUPABASE_KEY='sb_publishable_iC60RrnAdgRALEbRD7gDCA_SIiuDH7S';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const catToDb=c=>({'Природа':'nature','Город':'city','Еда':'food','Музыка':'music'}[c]||'other');
+const catFromDb=c=>({'nature':'Природа','city':'Город','food':'Еда','music':'Музыка','other':'Другое'}[c]||'Город');
+const timeAgo=v=>{const m=Math.max(0,Math.floor((Date.now()-new Date(v).getTime())/60000));return m<1?'сейчас':m<60?m+' мин':m<1440?Math.floor(m/60)+' ч':Math.floor(m/1440)+' дн'};
+const hashNum=v=>{let n=0;for(let i=0;i<String(v).length;i++)n=(n*31+String(v).charCodeAt(i))|0;return Math.abs(n)};
+const publicMedia=path=>path?sb.storage.from(path.split('/').length>=3?'photos':'moment-media').getPublicUrl(path).data.publicUrl:null;
+const dataBlob=data=>{const [head,b64]=data.split(',');const mime=(head.match(/data:(.*?);/)||[])[1]||'image/jpeg';const bin=atob(b64);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime})};
+const mediaUpload=async(data,uid,bucket='moment-media')=>{if(!data||!data.startsWith('data:'))return data||null;const blob=dataBlob(data),ext=blob.type==='image/png'?'png':blob.type==='image/webp'?'webp':'jpg',path=uid+'/'+crypto.randomUUID()+'.'+ext;const {error}=await sb.storage.from(bucket).upload(path,blob,{contentType:blob.type,upsert:false});if(error)throw error;return path};
+const h=(t,p,...c)=>{if(p&&p.class){p={...p,className:p.class};delete p.class}return React.createElement(t,p,...c)};
+const html=htm.bind(h);
+const P={heart:'M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z',msg:'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z',bm:'M6 3h12v18l-6-4-6 4z',bell:'M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7zM10 20a2 2 0 0 0 4 0',sun:'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z',x:'M6 6l12 12M18 6 6 18',rp:'M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3',flag:'M5 21V4h11l-1.5 4L16 12H5'};
+const I=({n,s=18})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d=${P[n]}/></svg>`;
+const ls=(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const NAV=[['home','Сейчас'],['explore','Explore'],['nearby','Рядом'],['flash','Flash'],['global','Мир'],['collection','Коллекция'],['messages','Сообщения'],['profile','Профиль']];
+const REG=[['Мир',1,50,50],['Россия',3.2,72,18],['Европа',4.2,55.5,21],['Америка',3,24,28]];
+const LAND='M20,30L60,20L100,25L95,45L75,60L70,75L55,60L35,50ZM80,80L105,85L112,105L100,140L90,135L85,105ZM165,35L190,25L260,25L330,35L320,60L290,75L270,95L245,85L225,75L210,70L190,60L170,55ZM170,65L200,65L215,90L205,125L190,125L180,100L165,80ZM290,105L320,105L325,125L295,128Z';
+const POSTS0=[
+{id:1,u:'Алина К.',h:'alina',when:'12 мин',c:'Казань',cn:'Россия',a:'Кировский район',lo:49.1,la:55.8,g:1,d:.9,t:'Туман над Волгой — через час его уже не будет.',l:128,k:14},
+{id:2,u:'Марк В.',h:'mark_v',when:'1 ч',c:'Санкт-Петербург',cn:'Россия',a:'центр',lo:30.3,la:59.9,g:1,d:4.2,t:'Белая ночь в ноябре? Нет, просто свет от реки.',l:342,k:27},
+{id:3,u:'Ева Н.',h:'evan',when:'3 ч',c:'Новосибирск',cn:'Россия',a:'область',lo:82.9,la:55,g:1,d:12,t:'Первый снег в этом году. Тихо.',l:76,k:5},
+{id:4,u:'Тимур Р.',h:'timur',when:'5 ч',c:'Владивосток',cn:'Россия',a:'',lo:131.9,la:43.1,g:1,d:18,t:'Рынок на рассвете: запах хлеба и моря.',l:211,k:19},
+{id:5,u:'Инес М.',h:'ines',when:'6 ч',c:'Лиссабон',cn:'Португалия',a:'Алфама',lo:-9.1,la:38.7,g:2,d:26,t:'Трамвай номер 28 снова опаздывает, и это прекрасно.',l:97,k:8},
+{id:6,u:'Джон Р.',h:'jr',when:'8 ч',c:'Нью-Йорк',cn:'США',a:'Бруклин',lo:-74,la:40.7,g:3,d:48,t:'Пар над крышами — город дышит.',l:154,k:11}];
+const EV0=[{id:1,t:'Закат над крышами',d:'Выложите свой кадр заката — собираем подборку вечера.',a:'Екатеринбург',lo:60.6,la:56.8,n:48,st:Date.now()-18*6e4,end:Date.now()+42*6e4},{id:2,t:'Первый снег',d:'Где уже выпал снег? Покажите свой двор.',a:'Область не указана',n:131,st:Date.now()-1*36e5,end:Date.now()+5*36e5}];
+const NT=['Алина К. отреагировала на ваш момент','Новое событие: «Закат над крышами»','Марк В. подписался на вас'];
+const CAT={1:'Природа',2:'Город',3:'Природа',4:'Еда',5:'Город',6:'Город'},CATS=['Природа','Город','Еда','Музыка','Другое'],catOf=p=>p.cat||CAT[p.id],HID={3:1},WX={1:'Туман',2:'Ясно',3:'Снег',4:'Облачно',5:'Ясно',6:'Туман'},wxOf=p=>p.wx||WX[p.id],CITIES=[...new Map(POSTS0.map(p=>[p.c,p])).values()].map(p=>({c:p.c,cn:p.cn,lo:p.lo,la:p.la,g:p.g})),scopeOk=(s,p,a)=>s==='Все'||(s==='Друзья'&&a.fw[p.h])||(s==='Мой город'&&p.d<=20)||(s==='Мир'&&p.d>20)||(s==='Рекомендации'&&a.ints.includes(catOf(p)));
+let seen=false;
+const pad=n=>String(n).padStart(2,'0');
+const fmt=ms=>{if(ms<=0)return'конец';const s=Math.floor(ms/1e3),hh=Math.floor(s/3600),m=Math.floor(s%3600/60);return(hh?hh+':'+pad(m):pad(m))+':'+pad(s%60)};
+const calmOn=()=>document.documentElement.hasAttribute('data-calm');
+const useNow=()=>{const [n,setN]=useState(Date.now());useEffect(()=>{const t=setInterval(()=>setN(Date.now()),1000);return()=>clearInterval(t)},[]);return n};
+const useCount=(to,ms=900)=>{const [v,setV]=useState(calmOn()?to:0);useEffect(()=>{if(calmOn()){setV(to);return}let r,t0;const f=t=>{t0=t0||t;const k=Math.min(1,(t-t0)/ms);setV(Math.round(to*(1-Math.pow(1-k,3))));if(k<1)r=requestAnimationFrame(f)};r=requestAnimationFrame(f);return()=>cancelAnimationFrame(r)},[to]);return v};
+const Num=({n})=>useCount(n).toLocaleString('ru-RU');
+const Cd=({end,big})=>{const n=useNow();return html`<span class=${big?'bigc':'chip'}>${fmt(end-n)}</span>`};
+const Av=({n,me,src})=>{const a=src||(me&&ls('mo-me',{}).av);return a?html`<img class="av" src=${a} alt=""/>`:html`<span class="av">${(n||'M')[0]}</span>`};
+const BA=({a,b})=>{const [v,setV]=useState(50);return html`<div class="ba"><img class="ph" src=${b} alt=""/><img class="ph ba-a" src=${a} alt="" style=${{clipPath:`inset(0 ${100-v}% 0 0)`}}/><input type="range" min="0" max="100" value=${v} onChange=${e=>setV(+e.target.value)} aria-label="До и после"/></div>`};
+const Picks=({posts,ev,ints})=>{
+ const [rc,setRc]=useState(null),g=posts.filter(p=>p.lo!=null),top=[...posts].sort((a,b)=>b.l-a.l)[0],rec=posts.filter(p=>ints.includes(catOf(p))).slice(0,3),pe=[...ev].sort((a,b)=>b.n-a.n)[0];
+ return html`<div style=${{margin:'0 0 28px'}}>
+  ${top&&html`<div class="tile a" style=${{minHeight:0,marginBottom:12}}><span class="lab">Кадр дня</span><p class="tx" style=${{fontSize:22}}>${top.t}</p>${top.img&&html`<img class="ph" src=${top.img} alt=""/>`}<span class="lab">@${top.h} · ${top.c||'область скрыта'}</span></div>`}
+  <div class="lab">Для вас${ints.length?'':' · выберите интересы в профиле'}</div>
+  ${rec.map(p=>html`<div key=${p.id} class="post"><div class="lab">${catOf(p)} · @${p.h}</div><p class="tx">${p.t}</p></div>`)}
+  <div class="row" style=${{margin:'14px 0'}}><button class="tbtn" onClick=${()=>setRc(g[Math.floor(Math.random()*g.length)])}>Случайный город</button>${rc&&html`<b>${rc.c}, ${rc.cn}</b>`}</div>
+  ${pe&&html`<div class="lab">Популярное событие: ${pe.t} · ${pe.n} участн.</div>`}</div>`};
+const Sw=({v,f,l})=>html`<button type="button" class=${'sw'+(v?' on':'')} onClick=${()=>f(!v)} role="switch" aria-checked=${v}><span>${l}</span><i/></button>`;
+const Seg=({v,o,f})=>html`<span class="seg">${o.map(([k,l])=>html`<button key=${k} class=${v===k?'on':''} onClick=${()=>f(k)}>${l}</button>`)}</span>`;
+
+const Strip=()=>{const t=useNow(),d=new Date(t);return html`<div class="strip"><span>Мир сейчас</span><span>${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())} UTC</span><span class="eq" aria-label="Активность мира">${[...Array(14).keys()].map(j=>html`<i key=${j} style=${{'--d':(j*7)%11}}/>`)}</span><span>Публикации сообщества</span><em>живые данные</em></div>`};
+
+const Post=({p,i,liked,saved,onL,onS,onU,onRep,onDuet,pick,comments=[],onComment,reposted=false,onRepost,isMine=false,onDelete})=>{
+ const [k,setK]=useState(0),[o,setO]=useState(false),[v,setV]=useState('');
+ const like=()=>{if(!liked)setK(k+1);onL(p.id)};
+ const send=e=>{e.preventDefault();if(!v.trim())return;onComment&&onComment(p.id,v.trim());setV('')};
+ return html`<article class=${'post st'+(pick?' pick':'')} style=${{'--n':i}}>
+  <div class="row"><${Av} n=${p.u} me=${p.h==='you'} src=${p.avatar}/><span class="lab grow">${[p.when,p.c,p.a,catOf(p),wxOf(p),p.tod,p.duet?'дуэт с @'+p.duet:''].filter(Boolean).join(' · ')||'область скрыта'}</span>${p.end?html`<${Cd} end=${p.end}/>`:''}</div>
+  <p class="tx">${p.t}</p>${p.img2&&p.img?html`<${BA} a=${p.img} b=${p.img2}/>`:p.img&&html`<img class="ph" src=${p.img} alt="" loading="lazy"/>`}
+  <div class="row"><button class="au" onClick=${()=>onU&&onU(p.h)}>@${p.h}</button><span class="grow"/>
+   <button class=${'ib'+(liked?' on':'')} onClick=${like} aria-label="Нравится"><${I} n="heart"/>${p.l||0}${liked&&k>0?html`<span class="bu" key=${k}>${[0,1,2,3,4,5,6,7].map(j=>html`<i key=${j} style=${{'--a':j*45+'deg'}}/>`)}</span>`:''}</button>
+   <button class="ib" onClick=${()=>setO(!o)} aria-label="Комментарии"><${I} n="msg"/>${comments.length||p.k||0}</button>
+   <button class=${'ib'+(saved?' on':'')} onClick=${()=>onS(p.id)} aria-label="Сохранить"><${I} n="bm"/></button>
+   <button class=${'ib'+(reposted?' on':'')} onClick=${()=>onRepost&&onRepost(p.id)} aria-label="Репост"><${I} n="rp"/>${p.r||0}</button>
+   <button class="ib" onClick=${()=>onRep&&onRep(p.id)} aria-label="Пожаловаться"><${I} n="flag"/></button>${isMine&&html`<button class="ib" onClick=${()=>onDelete&&onDelete(p.id)} aria-label="Удалить публикацию"><${I} n="x"/></button>`}<button class="tbtn" style=${{padding:'4px 12px',fontSize:12}} onClick=${()=>onDuet&&onDuet(p)}>Дуэт</button></div>
+  ${o&&html`<div class="cms">${comments.map((c,j)=>html`<p key=${c.id||j}><b>${c.author||'Участник'}:</b> ${c.body||c}</p>`)}<form onSubmit=${send} class="cf"><input class="in" value=${v} onChange=${e=>setV(e.target.value)} placeholder="Комментарий"/><button class="cbtn">Ответить</button></form></div>`}
+ </article>`};
+
+const CatBar=({ct,setCt,so,setSo})=>html`<div class="fl">${['Все',...CATS].map(c=>html`<button key=${c} class=${'fc'+(ct===c?' on':'')} onClick=${()=>setCt(c)}>${c}</button>`)}${so&&html`<${Seg} v=${so} f=${setSo} o=${[['new','Свежее'],['top','Популярное']]}/>`}</div>`;
+const WorldMap=({posts,sel,setSel,big,focus,evs,mine,onFind})=>{
+ const ref=React.useRef(null),pts=React.useRef(new Map()),[v,setV]=useState({s:1,x:50,y:50}),[dr,setDr]=useState(0),[qs,setQs]=useState(''),[msg,setMsg]=useState(''),[me,setMe]=useState(null),[tr,setTr]=useState(false);
+ const fly=(s,x,y)=>setV({s:Math.min(14,Math.max(1,s)),x:Math.min(100,Math.max(0,x)),y:Math.min(100,Math.max(0,y))});
+ const xy=p=>[(p.lo+180)/3.6,(90-p.la)/1.8],geo=posts.filter(p=>p.lo!=null&&(!HID[p.id]||v.s>=5));
+ useEffect(()=>{if(focus)fly(focus.s,focus.x,focus.y)},[focus]);
+ useEffect(()=>{if(v.s<5)return;posts.filter(p=>HID[p.id]&&p.lo!=null).forEach(p=>{const [x,y]=xy(p);if(Math.abs(v.x-x)<10&&Math.abs(v.y-y)<10){const f=ls('mo-found',{});if(!f[p.id]){f[p.id]=1;sv('mo-found',f);onFind&&onFind(p)}}})},[v]);
+ useEffect(()=>{const el=ref.current,f=e=>{e.preventDefault();setV(o=>({...o,s:Math.min(14,Math.max(1,o.s*Math.exp(-e.deltaY*.002)))}))};el.addEventListener('wheel',f,{passive:false});return()=>el.removeEventListener('wheel',f)},[]);
+ const down=e=>{pts.current.set(e.pointerId,[e.clientX,e.clientY]);setDr(1)};
+ const move=e=>{const m=pts.current;if(!m.has(e.pointerId))return;const b=ref.current.getBoundingClientRect(),o=m.get(e.pointerId),n=[e.clientX,e.clientY];
+  if(m.size===2){const q=[...m.entries()].find(([k])=>k!==e.pointerId)[1],d0=Math.hypot(o[0]-q[0],o[1]-q[1]),d1=Math.hypot(n[0]-q[0],n[1]-q[1]);if(d0)fly(v.s*d1/d0,v.x,v.y)}
+  else fly(v.s,v.x-(n[0]-o[0])/b.width*100/v.s,v.y-(n[1]-o[1])/b.height*100/v.s);
+  m.set(e.pointerId,n)};
+ const up=e=>{pts.current.delete(e.pointerId);if(!pts.current.size)setDr(0)};
+ const go=p=>{const [x,y]=xy(p);fly(6,x,y);setSel(p.id)};
+ const find=e=>{e.preventDefault();const t=qs.trim().toLowerCase(),p=t&&geo.find(p=>p.c.toLowerCase().includes(t));if(!p){setMsg('Город не найден');return}setMsg('');go(p)};
+ const tele=()=>{const p=geo[Math.floor(Math.random()*geo.length)];if(p){setMsg('');go(p)}};
+ const near=()=>{if(!navigator.geolocation){setMsg('Геолокация недоступна');return}navigator.geolocation.getCurrentPosition(g=>{const x=(Math.round(g.coords.longitude)+180)/3.6,y=(90-Math.round(g.coords.latitude))/1.8;setMe([x,y]);fly(5,x,y);setMsg('')},()=>setMsg('Доступ к геолокации не разрешён'),{maximumAge:6e5})};
+ const cell=12/v.s,G={};
+ geo.forEach(p=>{const [x,y]=xy(p),k=Math.floor(x/cell)+'_'+Math.floor(y/cell);(G[k]=G[k]||[]).push([p,x,y])});
+ const items=Object.values(G).map(a=>({a,x:a.reduce((t,i)=>t+i[1],0)/a.length,y:a.reduce((t,i)=>t+i[2],0)/a.length}));
+ const st=e=>e.stopPropagation();
+ return html`<div ref=${ref} class=${'map'+(big?' big':'')+(dr?' dr':'')+(v.s<2.5?' lz':'')} style=${{'--z':v.s}} onPointerDown=${down} onPointerMove=${move} onPointerUp=${up} onPointerCancel=${up} onPointerLeave=${up}>
+  <div class="lay" style=${{transform:`translate(${50-v.x*v.s}%,${50-v.y*v.s}%) scale(${v.s})`}}>
+   <svg viewBox="0 0 360 180" preserveAspectRatio="none"><path d=${LAND}/></svg>${tr&&mine&&mine.length>1&&html`<svg class="trl" viewBox="0 0 360 180" preserveAspectRatio="none"><polyline points=${mine.map(p=>(p.lo+180)+','+(90-p.la)).join(' ')} fill="none" stroke="var(--co)" stroke-width="2" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/></svg>`}
+   ${me&&html`<span class="me" style=${{left:me[0]+'%',top:me[1]+'%'}}/>`}${(evs||[]).filter(e=>e.lo!=null&&e.end>Date.now()).map(e=>html`<span key=${'e'+e.id} class="evm" title=${e.t} style=${{left:(e.lo+180)/3.6+'%',top:(90-e.la)/1.8+'%'}}/>`)}
+   ${items.map(({a,x,y},n)=>a.length>1?html`<button key=${'c'+n+a.length} class="pt cl" style=${{left:x+'%',top:y+'%'}} onClick=${()=>fly(v.s*2.6,x,y)} aria-label=${a.length+' моментов'}><i>${a.length}</i></button>`
+    :html`<button key=${a[0][0].id} class=${'pt'+(sel===a[0][0].id?' on':'')} style=${{left:x+'%',top:y+'%'}} onClick=${()=>setSel(sel===a[0][0].id?null:a[0][0].id)} aria-label=${a[0][0].c}><i/><span>${a[0][0].c}</span></button>`)}
+  </div>
+  <form class="mq" onPointerDown=${st} onSubmit=${find}><input value=${qs} onChange=${e=>setQs(e.target.value)} placeholder="Найти город" aria-label="Найти город"/><button>Найти</button></form>
+  ${msg&&html`<span class="lab mmsg">${msg}</span>`}
+  <div class="zm" onPointerDown=${st}><button onClick=${()=>fly(v.s*1.8,v.x,v.y)} aria-label="Приблизить">+</button><button onClick=${()=>fly(v.s/1.8,v.x,v.y)} aria-label="Отдалить">−</button></div>
+  <div class="rgs" onPointerDown=${st}>${REG.map(r=>html`<button key=${r[0]} onClick=${()=>fly(r[1],r[2],r[3])}>${r[0]}</button>`)}<button onClick=${tele}>Телепорт</button><button onClick=${near}>Моя область</button><button onClick=${()=>{if(!tr&&(!mine||new Set(mine.map(p=>p.c)).size<2))setMsg('Следы появятся, когда вы опубликуете моменты минимум в двух городах');else setMsg('');setTr(!tr)}}>${tr?'Скрыть следы':'Мои следы'}</button></div></div>`};
+const PfView=({h,posts,fw,onF,close,blk,onB,ints})=>{const ps=posts.filter(p=>p.h===h),u=ps[0]?ps[0].u:h,on=fw[h],th=[...new Set(ps.map(catOf))];
+ return html`<div class="ovl" onClick=${e=>e.target===e.currentTarget&&close()}><div class="sheet"><div class="row"><span class="lab grow">Профиль</span><button class="ib" onClick=${close} aria-label="Закрыть"><${I} n="x" s=${22}/></button></div>
+ <h1 class="hd" style=${{fontSize:'clamp(44px,12vw,80px)',margin:'18px 0 8px',wordBreak:'break-word'}}>${u}</h1><div class="lab">@${h}</div>
+ <div class="nums"><div><b>${ps.length}</b><span class="lab">моментов</span></div></div>
+ <div class="lab" style=${{margin:'12px 0'}}>Общее: ${th.filter(c=>ints.includes(c)).join(', ')||'пока нет общих интересов'}</div><button class=${'cbtn'+(on?' on':'')} onClick=${()=>onF(h)}>${on?'Вы подписаны':'Подписаться'}</button><button class="tbtn" style=${{marginLeft:8}} onClick=${()=>onB(h)}>${blk?'Разблокировать':'Заблокировать'}</button>
+ <div style=${{marginTop:20}}>${ps.map(p=>html`<article key=${p.id} class="post"><div class="lab">${[p.when,p.c].filter(Boolean).join(' · ')}</div><p class="tx">${p.t}</p></article>`)}</div></div></div>`};
+const match=(p,q)=>(p.t+p.u+p.h+(p.c||'')).toLowerCase().includes(q.toLowerCase());
+const Home=({posts,q,...a})=>{
+ const [sel,setSel]=useState(null),[ld,setLd]=useState(!seen),[ct,setCt]=useState('Все'),[so,setSo]=useState('new'),[sc,setSc]=useState('Все');
+ useEffect(()=>{if(!seen){const t=setTimeout(()=>{seen=true;setLd(false)},700);return()=>clearTimeout(t)}},[]);
+ useEffect(()=>{if(sel&&a.onOpen)a.onOpen()},[sel]);
+ const f0=posts.filter(p=>match(p,q)&&(ct==='Все'||catOf(p)===ct)&&scopeOk(sc,p,a)),f=so==='top'?[...f0].sort((a,b)=>b.l-a.l):f0,sp=sel&&f.find(p=>p.id===sel);
+ const row=(p,i,pick)=>html`<${Post} key=${p.id} p=${p} i=${i} pick=${pick} liked=${a.lk[p.id]} saved=${a.sd[p.id]} onL=${a.onL} onS=${a.onS} onU=${a.onU} onRep=${a.onRep} onDuet=${a.onDuet} comments=${a.comments?.[p.id]||[]} onComment=${a.onComment} reposted=${a.rp?.[p.id]} onRepost=${a.onRepost} isMine=${p.author_id===a.uid} onDelete=${a.onDelete}/>`;
+ return html`<div class="home"><${WorldMap} posts=${f0} evs=${a.ev} mine=${posts.filter(p=>p.h==='you'&&p.lo!=null).reverse()} onFind=${a.onFind} sel=${sel} setSel=${setSel}/>
+  <aside class="pan"><div class="lab">Последние события · ${f.length}</div>${q&&html`<p class="mu">Люди: ${[...new Set(posts.filter(p=>(p.u+p.h).toLowerCase().includes(q.toLowerCase())).map(p=>'@'+p.h))].join(', ')||'не найдены'} · События: ${(a.ev||[]).filter(e=>e.t.toLowerCase().includes(q.toLowerCase())).map(e=>e.t).join(', ')||'не найдены'}</p>`}<div class="fl">${['Все','Друзья','Мой город','Мир','Рекомендации'].map(t=>html`<button key=${t} class=${'fc'+(sc===t?' on':'')} onClick=${()=>setSc(t)}>${t}</button>`)}</div><${CatBar} ct=${ct} setCt=${setCt} so=${so} setSo=${setSo}/>
+  ${ld?[0,1,2].map(i=>html`<div key=${i} class="post"><div class="sk" style=${{height:12,width:'50%'}}/><div class="sk" style=${{height:44,marginTop:10}}/></div>`)
+  :html`${sp?row(sp,0,1):''}${f.filter(p=>p!==sp).map((p,i)=>row(p,i+1))}${f.length?'':html`<p class="mu" style=${{padding:'20px 0'}}>Ничего не найдено. Измените запрос или вкладку, выберите интересы и подписки в профиле.</p>`}`}</aside></div>`};
+
+const Explore=({posts,col,onC,go,ev,ints})=>html`<div class="pgx"><div class="lab">Подборка недели</div><h1 class="hd">Города,<br/>которые<br/>видно</h1><p class="lead">Места, где момент появился меньше часа назад. Соберите открытки в коллекцию или откройте город на карте.</p>
+ <${Picks} posts=${posts} ev=${ev} ints=${ints}/><div class="mos">${posts.filter(p=>p.lo!=null).map((p,i)=>html`<section key=${p.id} class=${'tile st '+(i===0?'a w':i===3?'d':i%3===1?'n':i===5?'w':'')} style=${{'--n':i}}><div class="row"><span class="lab grow">${p.cn}</span><span class="lab"><${Num} n=${p.l}/> реакций</span></div><div><h3 class=${i===0?'':'sm'}>${p.c}</h3><p class="mu" style=${{margin:'8px 0 12px'}}>${p.t}</p><div class="row"><button class=${'tbtn'+(col[p.c]?' on':'')} onClick=${()=>onC(p.c)}>${col[p.c]?'В коллекции':'В коллекцию'}</button><button class="tbtn" onClick=${()=>go('global')}>На карте</button></div></div></section>`)}</div><${Uni} posts=${posts}/></div>`;
+
+const Near=({posts,q,...a})=>{
+ const [mode,setMode]=useState('city'),[so,setSo]=useState('new'),mc=a.myCity||'';
+ const f0=posts.filter(p=>match(p,q)&&(mode==='all'||(mc&&p.c===mc))),f=so==='top'?[...f0].sort((a,b)=>b.l-a.l):f0;
+ return html`<div class="pgx"><div class="row" style=${{flexWrap:'wrap',gap:16}}><h1 class="hd grow">Рядом</h1><${Seg} v=${mode} f=${setMode} o=${[['city','Мой город'],['all','Все города']]}/></div>
+  <div class="fl"><${Seg} v=${so} f=${setSo} o=${[['new','Свежее'],['top','Популярное']]}/></div>
+  ${!mc&&mode==='city'&&html`<p class="authok">Укажи город в профиле, чтобы видеть публикации из него. Точная геопозиция для этого не нужна.</p>`}
+  <div class="radar" aria-label="Моменты в выбранном городе">${f.map(p=>{const ang=hashNum(p.id)*2.4,rad=15+(hashNum(p.id)%30);return html`<i key=${p.id} class="dot" style=${{left:50+Math.cos(ang)*rad+'%',top:50+Math.sin(ang)*rad+'%'}}/>`})}<span class="lab" style=${{position:'absolute',left:'50%',top:10,transform:'translateX(-50%)'}}>${mode==='all'?'Все города':mc||'Город не выбран'}</span></div>
+  <div class="lab">На карте показывается только центр города, а не точное местоположение автора</div>
+  ${f.length?f.map((p,i)=>html`<${Post} key=${p.id} p=${p} i=${i} liked=${a.lk[p.id]} saved=${a.sd[p.id]} onL=${a.onL} onS=${a.onS} onU=${a.onU} onRep=${a.onRep} onDuet=${a.onDuet} comments=${a.comments?.[p.id]||[]} onComment=${a.onComment}/>`):html`<p class="mu" style=${{padding:'20px 0'}}>Пока нет публикаций в этом разделе.</p>`}</div>`};
+
+const Flash=({ev,jn,onJ,eventComments={},onEventComment,onEventLike,eventLikes={},uid,onDelete})=>{const n=useNow(),[op,setOp]=useState(null),[tv,setTv]=useState(''),rxT=id=>{onEventLike&&onEventLike(id)},addC=id=>{if(!tv.trim())return;onEventComment&&onEventComment(id,tv.trim());setTv('')};return html`<div class="pgx"><div class="lab">Доска временных событий</div><h1 class="hd">Flash</h1><div class="mos" style=${{marginTop:28}}>${ev.map((e,i)=>{const j=jn[e.id],done=e.end<=n,pc=Math.max(0,Math.min(100,(e.end-n)/(e.end-e.st)*100));return html`<section key=${e.id} class=${'tile st '+(i===0?'a w f':'')} style=${{'--n':i}}><div class="row"><span class="lab grow">${e.a}</span><span class="lab">${e.n+(j?1:0)} участн.</span>${e.author_id===uid&&html`<button class="ib" onClick=${()=>onDelete&&onDelete(e.id)} aria-label="Удалить событие"><${I} n="x"/></button>`}</div><div>${e.img&&html`<img class="ph" src=${e.img} alt=""/>`}<${Cd} big=${1} end=${e.end}/><div class="bar"><i style=${{width:pc+'%'}}/></div><h3 class="sm">${e.t}</h3><p class="mu" style=${{margin:'6px 0 12px'}}>${e.d}</p><${Sw} v=${j} f=${()=>onJ(e.id)} l=${done?'Событие закончено':'Участвую'}/>
+  <div class="row"><button class=${'ib'+(eventLikes[e.id]?' on':'')} onClick=${()=>rxT(e.id)} aria-label="Реакция"><${I} n="heart"/>${(e.likes||0)}</button><button class="ib" onClick=${()=>setOp(op===e.id?null:e.id)} aria-label="Обсуждение"><${I} n="msg"/>${(eventComments[e.id]||[]).length}</button></div>
+  ${op===e.id&&html`<div class="cms">${(eventComments[e.id]||[]).map((c,x)=>html`<p key=${c.id||x}>${c.author||'Участник'}: ${c.body}</p>`)}<form class="cf" onSubmit=${s=>{s.preventDefault();addC(e.id)}}><input class="in" value=${tv} onChange=${s=>setTv(s.target.value)} placeholder="Обсуждение"/><button class="cbtn">Ответить</button></form></div>`}</div></section>`})}</div></div>`};
+
+const Glob=({posts,onOpen,ev,onFind})=>{
+ const now=useNow(),[sh,setSh]=useState(0),[fc,setFc]=useState(null),[sel,setSel]=useState(null),[ct,setCt]=useState('Все'),[cn,setCn]=useState('Все'),[wf,setWf]=useState('Все'),[so,setSo]=useState('new'),g0=posts.filter(p=>(ct==='Все'||catOf(p)===ct)&&(cn==='Все'||p.cn===cn)&&(wf==='Все'||wxOf(p)===wf)&&ageHours(p)>=sh),gp=so==='top'?[...g0].sort((a,b)=>b.l-a.l):g0;
+ useEffect(()=>{if(sel&&onOpen)onOpen()},[sel]);
+ const gl=posts.filter(p=>p.lo!=null),spot=gl[Math.floor(Date.now()/864e5)%gl.length],pul={};gl.forEach(p=>{pul[p.cn]=(pul[p.cn]||0)+p.l});const pm=Math.max(1,...Object.values(pul));
+ const sp=sel&&gp.find(p=>p.id===sel),pk=p=>{setFc({s:6,x:(p.lo+180)/3.6,y:(90-p.la)/1.8});setSel(p.id)};
+ return html`<div class="glob"><${WorldMap} big=${1} posts=${gp} evs=${ev} mine=${posts.filter(p=>p.h==='you'&&p.lo!=null).reverse()} onFind=${onFind} sel=${sel} setSel=${setSel} focus=${fc}/>
+  <div class="pgx"><div class="lab">Город дня</div>${spot&&html`<button class="tbtn" style=${{margin:'6px 0 14px'}} onClick=${()=>pk(spot)}>${spot.c}, ${spot.cn}</button>`}
+  <div class="lab">Страны</div><div class="fl">${['Все',...new Set(gl.map(p=>p.cn))].map(c=>html`<button key=${c} class=${'fc'+(cn===c?' on':'')} onClick=${()=>setCn(c)}>${c}</button>`)}</div>
+  <div class="lab">Погода</div><div class="fl">${['Все','Ясно','Облачно','Дождь','Снег','Туман'].map(w=>html`<button key=${w} class=${'fc'+(wf===w?' on':'')} onClick=${()=>setWf(w)}>${w}</button>`)}</div>
+  <${CatBar} ct=${ct} setCt=${setCt} so=${so} setSo=${setSo}/><div class="lab" style=${{margin:'14px 0 4px'}}>Машина времени · ${sh?'−'+sh+' ч':'сейчас'}</div><input type="range" class="rng" min="0" max="8" step="1" value=${sh} onChange=${e=>setSh(+e.target.value)} aria-label="Сдвиг назад в часах"/>${sp&&html`<${Mood} city=${sp.c}/>`}<ul class="idx">${gp.filter(p=>p.lo!=null).map(p=>html`<li key=${p.id} class=${sel===p.id?'on':''}><button onClick=${()=>pk(p)}><span>${p.c}</span><span class="lab" style=${{color:'inherit'}}>${tm(p.c,now)} · ${p.cn}</span></button></li>`)}</ul><div class="lab" style=${{margin:'22px 0 8px'}}>Пульс мира</div>${Object.entries(pul).map(([k,v])=>html`<div key=${k}><div class="row"><span class="grow mu">${k}</span><span class="lab">${v}</span></div><div class="bar"><i style=${{width:v/pm*100+'%'}}/></div></div>`)}</div></div>`};
+
+const TZ={'Казань':'Europe/Moscow','Санкт-Петербург':'Europe/Moscow','Новосибирск':'Asia/Novosibirsk','Владивосток':'Asia/Vladivostok','Лиссабон':'Europe/Lisbon','Нью-Йорк':'America/New_York'},AGE={1:.2,2:1,3:3,4:5,5:6,6:8};
+const ageHours=p=>p.created_at?Math.max(0,(Date.now()-new Date(p.created_at).getTime())/36e5):(AGE[p.id]??0);
+const tm=(c,n)=>{try{return new Date(n).toLocaleTimeString('ru-RU',{timeZone:TZ[c],hour:'2-digit',minute:'2-digit'})}catch(e){return''}};
+const Mood=({city})=>{const [v,setV]=useState(()=>ls('mo-mood',{})),m=v[city],pick=i=>{const o={...v,[city]:i};setV(o);sv('mo-mood',o)};
+ return html`<div style=${{margin:'12px 0'}}><div class="lab">Настроение города · демо-голоса и ваш</div><div class="fl">${['Спокойно','Энергично','Мечтательно'].map((l,i)=>html`<button key=${l} class=${'fc'+(m===i?' on':'')} onClick=${()=>pick(i)}>${l} ${6+(city.length+i*3)%7+(m===i?1:0)}</button>`)}</div></div>`};
+const Uni=({posts})=>{const [s,setS]=useState(null),ps=posts.filter(p=>p.lo!=null).map(p=>{const k=CATS.indexOf(catOf(p)),a=hashNum(p.id)*2.4,r=14+(hashNum(p.id)%50);return{p,k,x:60+k*120+Math.cos(a)*r,y:110+Math.sin(a)*r}});
+ return html`<div style=${{margin:'36px 0 0'}}><div class="lab">Вселенная моментов · созвездия по категориям</div>
+ <svg viewBox="0 0 360 220" style=${{width:'100%',maxWidth:560,display:'block'}} role="img" aria-label="Созвездия моментов">
+  ${CATS.map((c,k)=>html`<g key=${c}><text x=${60+k*120} y=${208} textAnchor="middle" fontSize="11" fill="var(--mu)">${c}</text>${ps.filter(o=>o.k===k).map((o,j,a)=>j?html`<line key=${j} x1=${a[j-1].x} y1=${a[j-1].y} x2=${o.x} y2=${o.y} stroke="var(--ln)" strokeWidth="1.5"/>`:null)}</g>`)}
+  ${ps.map(o=>html`<circle key=${o.p.id} cx=${o.x} cy=${o.y} r=${s===o.p.id?8:6} fill=${s===o.p.id?'var(--co)':'var(--ac)'} stroke="var(--tx)" strokeWidth="1.5" style=${{cursor:'pointer',transition:'r .25s'}} onClick=${()=>setS(s===o.p.id?null:o.p.id)}/>`)}</svg>
+ <p class="mu" style=${{minHeight:44,marginTop:8}}>${s?posts.find(p=>p.id===s).t:'Нажмите на звезду.'}</p></div>`};
+const TASKS=[['open','Откройте 3 города на карте',3],['like','Отметьте 2 момента',2],['post','Опубликуйте момент',1],['collect','Добавьте город в коллекцию',1]];
+const today=()=>new Date().toISOString().slice(0,10);
+const strk=d=>{let n=0,x=new Date();const h=y=>d.includes(y.toISOString().slice(0,10));if(!h(x))x.setDate(x.getDate()-1);while(h(x)){n++;x.setDate(x.getDate()-1)}return n};
+const Mys=({posts,onWin})=>{
+ const g=posts.filter(p=>p.lo!=null),[n,setN]=useState(()=>Math.floor(Math.random()*Math.max(1,g.length))),[r,setR]=useState(null);if(!g.length)return html`<p class="mu">Игра появится, когда в MOMENT будут публикации с городами.</p>`;const p=g[n%g.length],o=g.map(x=>x.c).filter(c=>c!==p.c);
+ const op=[...new Set([p.c,o[n%o.length],o[(n+2)%o.length]])].sort((a,b)=>(a.charCodeAt(0)+n)%3-(b.charCodeAt(0)+n)%3);
+ const pick=c=>{if(r)return;setR(c);if(c===p.c)onWin()};
+ return html`<div><div class="lab" style=${{margin:'28px 0 6px'}}>Угадайте город</div><p class="tx">${p.t}</p><p class="mu">Страна: ${p.cn}</p>
+  <div class="fl">${op.map(c=>html`<button key=${c} class=${'fc'+(r===c?' on':'')} onClick=${()=>pick(c)}>${c}</button>`)}</div>
+  ${r&&html`<p class="row"><b class="grow">${r===p.c?'Верно, +15 опыта':'Нет, это '+p.c}</b><button class="tbtn" onClick=${()=>{setN(n+1);setR(null)}}>Дальше</button></p>`}</div>`};
+const Coll=({posts,col,onC,gm,lk,onMy})=>{
+ const gp=posts.filter(p=>p.lo!=null),cs=[...new Set(gp.map(p=>p.c))],n=cs.filter(c=>col[c]).length,c=gm.day===today()?gm.c:{},rk={};
+ gp.forEach(p=>{rk[p.c]=(rk[p.c]||0)+p.l+(lk[p.id]?1:0)});
+ const top=Object.entries(rk).sort((a,b)=>b[1]-a[1]),lv=1+Math.floor(gm.xp/50),H={margin:'28px 0 8px'};
+ return html`<div class="pgx"><div class="lab">Уровень исследователя</div><h1 class="hd"><${Num} n=${lv}/></h1>
+  <div class="bar"><i style=${{width:gm.xp%50*2+'%'}}/></div><div class="row mu"><span class="grow">${gm.xp%50} / 50 опыта</span><span>Серия: ${strk(gm.days)} дн.</span></div>
+  <div class="lab" style=${H}>Задания дня</div>
+  ${TASKS.map(([k,l,m])=>{const v=Math.min(c[k]||0,m);return html`<div key=${k} class="post"><div class="row"><span class="grow">${l}</span><span class="lab">${v}/${m}${v>=m?' · готово':''}</span></div><div class="bar"><i style=${{width:v/m*100+'%'}}/></div></div>`})}
+  <div class="lab" style=${H}>Мировой челлендж</div><p>Соберите открытки всех городов: ${n} из ${cs.length}</p><div class="bar"><i style=${{width:(cs.length?n/cs.length*100:0)+'%'}}/></div>
+  <${Mys} posts=${posts} onWin=${onMy}/>
+  <div class="lab" style=${H}>Рейтинг городов по реакциям</div><ul class="idx">${top.map(([k,v])=>html`<li key=${k}><button style=${{cursor:'default'}}><span>${k}</span><span class="lab" style=${{color:'inherit'}}>${v}</span></button></li>`)}</ul>
+  <div class="lab" style=${H}>Открытки городов</div>
+  <div class="pcs">${cs.map((c,i)=>html`<button key=${c} class=${'pc st'+(col[c]?' on':'')} style=${{'--n':i}} onClick=${()=>onC(c)}><span class="lab">${col[c]?'собрано':'не собрано'}</span><h3>${c}</h3></button>`)}</div></div>`};
+const Prof=({theme,setTheme,calm,setCalm,posts,col,fw,gm,ints,setInts,profile,onSave,onAvatar,onSignOut,onInterestChange,cities=[]})=>{const my=posts.filter(p=>p.h==='you'||p.h===profile?.username),[me,setMe]=useState(()=>ls('mo-me',{n:'',b:''})),upd=m=>{setMe(m);sv('mo-me',m)},pickAv=e=>{const fl=e.target.files[0];if(fl&&onAvatar)onAvatar(fl)},lv=1+Math.floor(gm.xp/50);
+ useEffect(()=>{if(profile)setMe({n:profile.display_name||'',b:profile.bio||'',c:profile.city||'',av:profile.avatar_url||''})},[profile]);return html`<div class="pgx" style=${{display:'flex',gap:24}}>
+ <div class="lab vt" style=${{flex:'none'}}>@${profile?.username||'you'} · аккаунт MOMENT</div>
+ <div class="grow"><div class="pcov"/><div class="pfa">${me.av?html`<img class="avi" src=${me.av} alt=""/>`:html`<span class="av big">${(me.n||'В')[0]}</span>`}</div>
+  <label class="f"><span class="lab">Фото профиля</span><input type="file" accept="image/*" onChange=${pickAv}/></label>
+  <h1 class="hd" style=${{wordBreak:'break-word'}}>${me.n.trim()||'Ваше место'}</h1><p class="lead">${me.b.trim()||'Ваш профиль и публикации синхронизируются между устройствами.'}</p>
+  <label class="f"><span class="lab">Имя</span><input class="in" value=${me.n} maxLength="60" onChange=${e=>upd({...me,n:e.target.value})} onBlur=${()=>onSave&&onSave(me)}/></label><label class="f"><span class="lab">О себе</span><textarea class="in" value=${me.b} maxLength="300" onChange=${e=>upd({...me,b:e.target.value})} onBlur=${()=>onSave&&onSave(me)}/></label>
+  <div class="nums"><div><b><${Num} n=${my.length}/></b><span class="lab">моментов</span></div><div><b><${Num} n=${Object.values(col).filter(Boolean).length}/></b><span class="lab">открыток</span></div><div><b>${lv}</b><span class="lab">уровень</span></div><div><b>${Object.values(fw).filter(Boolean).length}</b><span class="lab">подписок</span></div></div>
+  <div class="lab">Тема</div><div style=${{margin:'6px 0 20px'}}><${Seg} v=${theme} f=${setTheme} o=${[['light','Светлая'],['dark','Тёмная']]}/></div>
+  <div class="lab">Анимации</div><div style=${{margin:'6px 0 28px'}}><${Seg} v=${calm?1:0} f=${v=>setCalm(!!v)} o=${[[0,'Полные'],[1,'Меньше']]}/></div>
+  <div class="lab">Интересы</div><div class="fl">${CATS.map(c=>html`<button key=${c} class=${'fc'+(ints.includes(c)?' on':'')} onClick=${()=>onInterestChange?onInterestChange(ints.includes(c)?ints.filter(x=>x!==c):[...ints,c]):setInts(ints.includes(c)?ints.filter(x=>x!==c):[...ints,c])}>${c}</button>`)}</div>
+  <label class="f"><span class="lab">Мой город</span><select class="in" value=${me.c||''} onChange=${e=>{const m={...me,c:e.target.value};upd(m);onSave&&onSave(m)}}><option value="">Не выбран</option>${(cities.length?cities.map(c=>({c:c.name})):CITIES).map(c=>html`<option key=${c.c}>${c.c}</option>`)}</select></label>
+  <button class="tbtn" style=${{margin:'18px 0'}} onClick=${onSignOut}>Выйти из аккаунта</button><div class="lab">Достижения</div><div style=${{margin:'8px 0 24px'}}>${[['Первый шаг',gm.xp>0],['Исследователь',gm.xp>=50],['Серия 3 дня',strk(gm.days)>=3],['Коллекционер',Object.values(col).filter(Boolean).length>=3],['Автор',my.length>0]].map(([l,on])=>html`<span key=${l} class=${'ach'+(on?' on':'')}>${l}</span>`)}</div>
+  <div class="lab">Ваши моменты</div>${my.length?my.map((p,i)=>html`<article key=${p.id} class="post st" style=${{'--n':i}}><div class="lab">${p.when}</div><p class="tx">${p.t}</p></article>`):html`<p class="mu" style=${{padding:'12px 0'}}>Пока пусто. Опубликуйте первый момент.</p>`}</div></div>`};
+
+const Create=({onPost,onEv,close,duet,cities=[]})=>{
+ const [k,setK]=useState('moment'),[t,setT]=useState(''),[ti,setTi]=useState(''),[a,setA]=useState(''),[g,setG]=useState(true),[x,setX]=useState('0'),[cat,setCat]=useState('Город'),[cty,setCty]=useState(''),[wx,setWx]=useState(''),[img,setImg]=useState(null),[img2,setImg2]=useState(null);
+ const ar=g&&a.trim()?a.trim():null,cityOptions=cities.length?cities.map(c=>({c:c.name,cn:c.country,lo:c.lon,la:c.lat,g:1})):CITIES,ci=cityOptions.find(x=>x.c===cty);
+ const pick=(e,set)=>{const fl=e.target.files[0];if(!fl||fl.size>2e7)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);set(c.toDataURL('image/jpeg',.8))};im.src=r.result};r.readAsDataURL(fl)};const pickImg=e=>pick(e,setImg),pickImg2=e=>pick(e,setImg2);
+ const sub=e=>{e.preventDefault();
+  if(k==='moment'){if(!t.trim())return;onPost({id:Date.now(),u:(ls('mo-me',{n:''}).n||'').trim()||'Вы',h:'you',when:'сейчас',...(ci?{c:ci.c,cn:ci.cn,lo:ci.lo,la:ci.la,g:ci.g,a:ar}:{c:ar}),wx,tod:['ночь','утро','день','вечер'][Math.floor(new Date().getHours()/6)],cat,img,img2,duet:duet?duet.h:null,duet_id:duet?duet.id:null,t:t.trim(),d:.5,l:0,k:0,end:+x?Date.now()+x*36e5:null})}
+  else{if(!ti.trim())return;onEv({id:Date.now(),t:ti.trim(),d:t.trim(),a:ar,img,...(ci?{c:ci.c,lo:ci.lo,la:ci.la}:{}),n:1,st:Date.now(),end:Date.now()+(+x)*36e5})}};
+ return html`<div class="ovl" onClick=${e=>e.target===e.currentTarget&&close()}><form class="sheet" onSubmit=${sub}>
+  <div class="row"><${Seg} v=${k} f=${v=>{setK(v);setX(v==='flash'?'1':'0')}} o=${[['moment','Момент'],['flash','Flash-событие']]}/><span class="grow"/><button type="button" class="ib" onClick=${close} aria-label="Закрыть"><${I} n="x" s=${22}/></button></div>
+  ${k==='flash'&&html`<label class="f"><span class="lab">Название</span><input class="in" value=${ti} onChange=${e=>setTi(e.target.value)}/></label>`}
+  <label class="f"><span class="lab">${k==='flash'?'Описание':'Что происходит сейчас'}</span><textarea class="in" value=${t} onChange=${e=>setT(e.target.value)}/></label>
+  <label class="f"><span class="lab">Город или район — примерно</span><input class="in" value=${a} disabled=${!g} onChange=${e=>setA(e.target.value)} placeholder="Точные координаты не сохраняются"/></label>
+  ${duet&&html`<p class="mu">Дуэт с @${duet.h}: «${duet.t}». Ответьте своим фото.</p>`}<label class="f"><span class="lab">Город для карты</span><select class="in" value=${cty} onChange=${e=>setCty(e.target.value)}><option value="">Не указывать</option>${cityOptions.map(c=>html`<option key=${c.c}>${c.c}</option>`)}</select></label>
+  <label class="f"><span class="lab">Погода</span><select class="in" value=${wx} onChange=${e=>setWx(e.target.value)}><option value="">Не указывать</option>${['Ясно','Облачно','Дождь','Снег','Туман'].map(w=>html`<option key=${w}>${w}</option>`)}</select></label>
+  <label class="f"><span class="lab">Категория</span><select class="in" value=${cat} onChange=${e=>setCat(e.target.value)}>${CATS.map(c=>html`<option key=${c}>${c}</option>`)}</select></label>
+  <label class="f"><span class="lab">Фото</span><input type="file" accept="image/*" onChange=${pickImg}/></label>${img&&html`<img class="ph" src=${img} alt=""/>`}${k==='moment'&&img&&html`<label class="f"><span class="lab">Фото «после» для сравнения До и После</span><input type="file" accept="image/*" onChange=${pickImg2}/></label>`}
+  <${Sw} v=${g} f=${setG} l="Показывать примерную область"/>
+  <label class="f"><span class="lab">Время существования</span><select class="in" value=${x} onChange=${e=>setX(e.target.value)}>${k==='moment'&&html`<option value="0">Не исчезает</option>`}<option value="1">1 час</option><option value="6">6 часов</option><option value="24">24 часа</option></select></label>
+  <button class="cbtn">Опубликовать</button></form></div>`};
+
+const AuthGate=({onClose,recovery=false})=>{
+ useEffect(()=>{if(recovery)setMode('recovery')},[recovery]);
+ const [mode,setMode]=useState(recovery?'recovery':'login'),[email,setEmail]=useState(''),[pass,setPass]=useState(''),[username,setUsername]=useState(''),[display,setDisplay]=useState(''),[busy,setBusy]=useState(false),[err,setErr]=useState(''),[notice,setNotice]=useState(''),[acceptedTerms,setAcceptedTerms]=useState(false);
+ const submit=async e=>{e.preventDefault();setBusy(true);setErr('');setNotice('');try{
+  if(mode==='recovery'){if(pass.length<8)throw new Error('Пароль должен содержать минимум 8 символов.');const {error}=await sb.auth.updateUser({password:pass});if(error)throw error;setNotice('Пароль обновлён.');onClose();return}
+  if(mode==='signup'){
+   if(!acceptedTerms)throw new Error('Для регистрации нужно принять Пользовательское соглашение.');
+   if(pass.length<8)throw new Error('Пароль должен содержать минимум 8 символов.');
+   const u=username.toLowerCase().replace(/[^a-z0-9_]/g,'');if(u.length<3||u.length>20)throw new Error('Ник: от 3 до 20 символов, латиница, цифры и _.');
+   const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{username:u,display_name:display.trim()||u,accepted_terms_version:'1.0',accepted_terms_at:new Date().toISOString()}}});if(error)throw error;
+   if(data.session){onClose()}else setNotice('Аккаунт создан. Проверьте почту и подтвердите адрес, затем войдите в MOMENT.');
+  }else{
+   const {error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error;onClose();
+  }
+ }catch(x){setErr(x.message||'Не удалось выполнить вход.')}finally{setBusy(false)}};
+ const reset=async()=>{if(!email.trim()){setErr('Сначала укажите электронную почту.');return}setBusy(true);setErr('');try{const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;setNotice('Если адрес зарегистрирован, письмо для сброса пароля отправлено.')}catch(e){setErr(e.message)}finally{setBusy(false)}};
+ return html`<div class="authbox"><section class="authcard"><div class="row"><b class="wm">MOMENT<i/></b><span class="grow"/><span class="lab">социальная геосеть</span></div><div class="lab" style=${{marginTop:26}}>Мир происходит прямо сейчас</div><h1 class="hd">Твой<br/>момент.</h1><p class="lead">Делись впечатлениями, открывай города и собирай карту мира. Геопозиция показывается только на уровне города — точные координаты не публикуются.</p>
+ ${mode!=='recovery'&&html`<div class="seg" style=${{width:'100%'}}><button style=${{flex:1}} class=${mode==='login'?'on':''} onClick=${()=>{setMode('login');setErr('');setNotice('')}}>Войти</button><button style=${{flex:1}} class=${mode==='signup'?'on':''} onClick=${()=>{setMode('signup');setErr('');setNotice('')}}>Создать аккаунт</button></div>`}
+ <form onSubmit=${submit} style=${{marginTop:14}}>${mode==='signup'&&html`<label class="f"><span class="lab">Отображаемое имя</span><input class="in" value=${display} maxLength="60" onChange=${e=>setDisplay(e.target.value)} placeholder="Как вас называть"/></label><label class="f"><span class="lab">Никнейм</span><input class="in" value=${username} maxLength="20" onChange=${e=>setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,''))} placeholder="moment_user" required/></label>`}${mode!=='recovery'&&html`<label class="f"><span class="lab">Электронная почта</span><input class="in" type="email" autoComplete="email" value=${email} onChange=${e=>setEmail(e.target.value)} required/></label>`}<label class="f"><span class="lab">${mode==='recovery'?'Новый пароль':'Пароль'}</span><input class="in" type="password" autoComplete=${mode==='login'?'current-password':'new-password'} value=${pass} onChange=${e=>setPass(e.target.value)} minLength="8" required/></label>
+ ${mode==='signup'&&html`<label style=${{display:'flex',alignItems:'flex-start',gap:10,margin:'14px 0',fontSize:13,lineHeight:1.45,color:'var(--mu)'}}><input type="checkbox" checked=${acceptedTerms} onChange=${e=>setAcceptedTerms(e.target.checked)} style=${{marginTop:4,accentColor:'var(--co)'}}/><span>Я подтверждаю, что мне не менее 13 лет, а если я несовершеннолетний(яя), у меня есть разрешение родителя или опекуна, когда оно требуется. Принимаю <a href="./terms.html" target="_blank" rel="noopener" style=${{color:'var(--tx)',fontWeight:800,textDecorationColor:'var(--co)'}}>Пользовательское соглашение MOMENT</a>.</span></label>`}${err&&html`<p class="autherr">${err}</p>`}${notice&&html`<p class="authok">${notice}</p>`}<button class="cbtn" style=${{width:'100%',marginTop:8}} disabled=${busy||(mode==='signup'&&!acceptedTerms)}>${busy?'Подождите…':mode==='signup'?'Создать аккаунт':mode==='recovery'?'Сохранить пароль':'Войти в MOMENT'}</button></form>
+ ${mode==='login'&&html`<button class="ib" style=${{marginTop:8}} onClick=${reset}>Забыли пароль?</button>`}<p class="mu" style=${{marginTop:14,fontSize:12}}>Не указывайте в публикациях домашний адрес, школу, номер телефона и другие личные данные. В личных сообщениях не отправляйте незнакомым людям личные данные. <a href="./terms.html" target="_blank" rel="noopener" style=${{color:'var(--tx)'}}>Пользовательское соглашение</a> · <a href="./download.html" style=${{color:'var(--tx)'}}>О MOMENT</a></p></section></div>`};
+
+
+const Messenger=({uid,profile,onToast})=>{
+ const [convs,setConvs]=useState([]),[active,setActive]=useState(null),[messages,setMessages]=useState([]),[draft,setDraft]=useState(''),[query,setQuery]=useState(''),[results,setResults]=useState([]),[searching,setSearching]=useState(false),[groupMode,setGroupMode]=useState(false),[groupTitle,setGroupTitle]=useState(''),[picked,setPicked]=useState([]),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[recording,setRecording]=useState(false),[rec,setRec]=useState(null);
+ const loadConversations=async()=>{
+  if(!uid)return;
+  const {data:mine,error}=await sb.from('conversation_members').select('conversation_id,role,last_read_at').eq('user_id',uid);
+  if(error)throw error;const ids=(mine||[]).map(x=>x.conversation_id);if(!ids.length){setConvs([]);setActive(null);return}
+  const [{data:cs,error:ce},{data:ms,error:me},{data:recent,error:re}]=await Promise.all([
+   sb.from('conversations').select('id,kind,title,avatar_path,last_message_at,created_by').in('id',ids).order('last_message_at',{ascending:false}),
+   sb.from('conversation_members').select('conversation_id,user_id,role,last_read_at').in('conversation_id',ids),
+   sb.from('chat_messages').select('id,conversation_id,sender_id,body,message_type,created_at').in('conversation_id',ids).order('created_at',{ascending:false}).limit(250)
+  ]);
+  if(ce)throw ce;if(me)throw me;if(re)throw re;
+  const userIds=[...new Set((ms||[]).map(x=>x.user_id))];const {data:ps,error:pe}=userIds.length?await sb.from('profiles').select('id,username,display_name,avatar_path').in('id',userIds):{data:[],error:null};if(pe)throw pe;
+  const pm=Object.fromEntries((ps||[]).map(x=>[x.id,{...x,avatar_url:x.avatar_path?sb.storage.from('photos').getPublicUrl(x.avatar_path).data.publicUrl:null}]));
+  const mapped=(cs||[]).map(c=>{const members=(ms||[]).filter(m=>m.conversation_id===c.id).map(m=>({...m,profile:pm[m.user_id]||{}}));const other=members.find(m=>m.user_id!==uid)?.profile;const last=(recent||[]).find(m=>m.conversation_id===c.id);return {...c,members,other,last,last_read_at:mine.find(m=>m.conversation_id===c.id)?.last_read_at,title_display:c.kind==='group'?(c.title||'Группа'):other?.display_name||other?.username||'Диалог',avatar_url:c.kind==='group'?null:other?.avatar_url||null}});
+  mapped.sort((a,b)=>new Date(b.last?.created_at||b.last_message_at)-new Date(a.last?.created_at||a.last_message_at));setConvs(mapped);setActive(old=>old?mapped.find(c=>c.id===old.id)||null: null);
+ };
+ const loadMessages=async id=>{
+  if(!id)return;const {data:rows,error}=await sb.from('chat_messages').select('id,conversation_id,sender_id,body,message_type,reply_to,edited_at,created_at').eq('conversation_id',id).is('deleted_at',null).order('created_at',{ascending:true}).limit(150);if(error)throw error;
+  const ids=(rows||[]).map(x=>x.id),authors=[...new Set((rows||[]).map(x=>x.sender_id))];
+  const [{data:ps,error:pe},{data:ats,error:ae},{data:rs,error:re}]=await Promise.all([
+   authors.length?sb.from('profiles').select('id,username,display_name,avatar_path').in('id',authors):Promise.resolve({data:[],error:null}),
+   ids.length?sb.from('chat_attachments').select('id,message_id,storage_path,file_name,mime_type,byte_size,duration_seconds').in('message_id',ids):Promise.resolve({data:[],error:null}),
+   ids.length?sb.from('chat_reactions').select('message_id,user_id,emoji').in('message_id',ids):Promise.resolve({data:[],error:null})
+  ]);if(pe)throw pe;if(ae)throw ae;if(re)throw re;
+  const pm=Object.fromEntries((ps||[]).map(x=>[x.id,{...x,avatar_url:x.avatar_path?sb.storage.from('photos').getPublicUrl(x.avatar_path).data.publicUrl:null}]));
+  const files=await Promise.all((ats||[]).map(async a=>{const {data}=await sb.storage.from('chat-media').createSignedUrl(a.storage_path,3600);return {...a,url:data?.signedUrl||null}}));
+  const mapped=(rows||[]).map(m=>({...m,author:pm[m.sender_id]||{},attachment:files.find(a=>a.message_id===m.id)||null,reactions:(rs||[]).filter(r=>r.message_id===m.id)}));setMessages(mapped);
+  sb.rpc('mark_chat_read',{p_conversation_id:id}).then(({error:e})=>{if(e)console.warn('read receipt',e.message)});
+ };
+ useEffect(()=>{let live=true;setLoading(true);loadConversations().catch(e=>onToast('Не удалось загрузить чаты: '+e.message)).finally(()=>{if(live)setLoading(false)});return()=>{live=false}},[uid]);
+ useEffect(()=>{if(!active?.id)return;loadMessages(active.id).catch(e=>onToast('Не удалось загрузить сообщения: '+e.message))},[active?.id]);
+ useEffect(()=>{if(!uid)return;const ch=sb.channel('moment-chat-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'chat_messages'},()=>{loadConversations().catch(()=>{});if(active?.id)loadMessages(active.id).catch(()=>{})}).on('postgres_changes',{event:'*',schema:'public',table:'chat_reactions'},()=>{if(active?.id)loadMessages(active.id).catch(()=>{})}).on('postgres_changes',{event:'*',schema:'public',table:'chat_attachments'},()=>{if(active?.id)loadMessages(active.id).catch(()=>{})}).on('postgres_changes',{event:'*',schema:'public',table:'conversation_members'},()=>loadConversations().catch(()=>{})).subscribe();return()=>{sb.removeChannel(ch)}},[uid,active?.id]);
+ const searchUsers=async()=>{const q=query.trim().replace(/[%,()]/g,'');if(q.length<2){setResults([]);return}setSearching(true);try{const {data,error}=await sb.from('profiles').select('id,username,display_name,avatar_path').ilike('username',q+'%').neq('id',uid).limit(12);if(error)throw error;setResults((data||[]).map(x=>({...x,avatar_url:x.avatar_path?sb.storage.from('photos').getPublicUrl(x.avatar_path).data.publicUrl:null})))}catch(e){onToast('Поиск не выполнен: '+e.message)}finally{setSearching(false)}};
+ const startDirect=async user=>{setBusy(true);try{const old=convs.find(c=>c.kind==='direct'&&c.members.some(m=>m.user_id===user.id));if(old){setActive(old);setResults([]);setQuery('');return}const {data:c,error:ce}=await sb.from('conversations').insert({kind:'direct',created_by:uid}).select('id').single();if(ce)throw ce;const {error:me}=await sb.from('conversation_members').insert({conversation_id:c.id,user_id:uid,role:'owner'});if(me)throw me;const {error:ue}=await sb.from('conversation_members').insert({conversation_id:c.id,user_id:user.id,role:'member'});if(ue)throw ue;await loadConversations();const {data:cs}=await sb.from('conversations').select('id,kind,title,avatar_path,last_message_at,created_by').eq('id',c.id).single();const newConv={...cs,kind:'direct',members:[{user_id:uid,profile},{user_id:user.id,profile:user}],other:user,title_display:user.display_name||user.username,avatar_url:user.avatar_url};setConvs(old=>[newConv,...old]);setActive(newConv);setResults([]);setQuery('')}catch(e){onToast('Не удалось открыть диалог: '+e.message)}finally{setBusy(false)}};
+ const togglePicked=user=>setPicked(old=>old.some(x=>x.id===user.id)?old.filter(x=>x.id!==user.id):[...old,user]);
+ const createGroup=async()=>{if(!groupTitle.trim()||!picked.length){onToast('Укажите название и выберите участников');return}setBusy(true);try{const {data:c,error:ce}=await sb.from('conversations').insert({kind:'group',title:groupTitle.trim().slice(0,80),created_by:uid}).select('id').single();if(ce)throw ce;const {error:me}=await sb.from('conversation_members').insert({conversation_id:c.id,user_id:uid,role:'owner'});if(me)throw me;const {error:ue}=await sb.from('conversation_members').insert(picked.map(u=>({conversation_id:c.id,user_id:u.id,role:'member'})));if(ue)throw ue;await loadConversations();const {data:cs}=await sb.from('conversations').select('id,kind,title,avatar_path,last_message_at,created_by').eq('id',c.id).single();const all=[{user_id:uid,profile},...picked.map(u=>({user_id:u.id,profile:u}))];const item={...cs,members:all,title_display:cs.title,kind:'group'};setConvs(old=>[item,...old]);setActive(item);setGroupMode(false);setGroupTitle('');setPicked([]);setResults([]);setQuery('')}catch(e){onToast('Не удалось создать группу: '+e.message)}finally{setBusy(false)}};
+ const sendText=async e=>{e?.preventDefault();const body=draft.trim();if(!body||!active||busy)return;setBusy(true);try{const {error}=await sb.from('chat_messages').insert({conversation_id:active.id,sender_id:uid,body:body.slice(0,5000),message_type:'text'});if(error)throw error;setDraft('');await Promise.all([loadMessages(active.id),loadConversations()])}catch(x){onToast('Сообщение не отправлено: '+x.message)}finally{setBusy(false)}};
+ const sendFile=async file=>{if(!active||!file)return;const mime=(file.type||'').split(';')[0].toLowerCase();const allowed=['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/webm','audio/webm','audio/ogg','audio/mp4','application/pdf','text/plain'];if(!allowed.includes(mime)||file.size>50*1024*1024){onToast('Этот тип файла не поддерживается или размер больше 50 МБ');return}setBusy(true);let path=null;try{const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(-90)||'file';path=active.id+'/'+uid+'/'+crypto.randomUUID()+'-'+safe;const {error:up}=await sb.storage.from('chat-media').upload(path,file,{contentType:mime,upsert:false});if(up)throw up;const type=mime.startsWith('image/')?'image':mime.startsWith('video/')?'video':mime.startsWith('audio/')?'voice':'file';const {data:m,error:me}=await sb.from('chat_messages').insert({conversation_id:active.id,sender_id:uid,body:file.name.slice(0,240),message_type:type}).select('id').single();if(me)throw me;const {error:ae}=await sb.from('chat_attachments').insert({message_id:m.id,conversation_id:active.id,storage_path:path,file_name:file.name.slice(0,240),mime_type:mime,byte_size:file.size});if(ae)throw ae;await Promise.all([loadMessages(active.id),loadConversations()])}catch(e){if(path)await sb.storage.from('chat-media').remove([path]).catch(()=>{});onToast('Файл не отправлен: '+e.message)}finally{setBusy(false)}};
+ const startRecording=async()=>{if(!active||!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){onToast('Запись голосовых не поддерживается этим браузером');return}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});const mime=['audio/webm;codecs=opus','audio/webm','audio/mp4'].find(x=>MediaRecorder.isTypeSupported(x));const mr=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);const chunks=[];mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};mr.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:mr.mimeType||'audio/webm'});const ext=blob.type.includes('mp4')?'m4a':'webm';sendFile(new File([blob],'voice-'+Date.now()+'.'+ext,{type:(blob.type||'audio/webm').split(';')[0]}))};mr.start();setRec(mr);setRecording(true)}catch(e){onToast('Не удалось включить микрофон: '+e.message)}};
+ const stopRecording=()=>{if(rec&&rec.state!=='inactive')rec.stop();setRecording(false);setRec(null)};
+ const react=async(message,emoji)=>{const had=message.reactions.some(r=>r.user_id===uid&&r.emoji===emoji);try{const q=had?sb.from('chat_reactions').delete().eq('message_id',message.id).eq('user_id',uid).eq('emoji',emoji):sb.from('chat_reactions').insert({message_id:message.id,user_id:uid,emoji});const {error}=await q;if(error)throw error;await loadMessages(active.id)}catch(e){onToast('Реакция не сохранена: '+e.message)}};
+ const fmt=t=>new Date(t).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+ return html`<section class="chatpage"><div class="chathead"><div class="grow"><div class="lab">MOMENT / MESSENGER</div><h1 class="hd" style=${{fontSize:'clamp(38px,7vw,76px)'}}>Сообщения</h1></div><button class="cbtn" onClick=${()=>{setGroupMode(!groupMode);setPicked([]);setResults([])}}>${groupMode?'Отмена':'＋ Группа'}</button></div>
+ <div class=${'chatlayout'+(active?' roomopen':'')}><aside class="chatpanel chatlist"><div class="chatlisttop"><input class="in" value=${query} placeholder="Найти пользователя по нику" onChange=${e=>setQuery(e.target.value)} onKeyDown=${e=>e.key==='Enter'&&(e.preventDefault(),searchUsers())}/><div class="row"><button class="tbtn" onClick=${searchUsers} disabled=${searching}>${searching?'Поиск…':'Найти'}</button>${groupMode&&html`<button class="cbtn" disabled=${busy||!picked.length} onClick=${createGroup}>Создать группу · ${picked.length}</button>`}</div>${groupMode&&html`<input class="in" value=${groupTitle} maxLength="80" placeholder="Название группы" onChange=${e=>setGroupTitle(e.target.value)}/>`}${results.length>0&&html`<div class="chatsearchresults">${results.map(u=>html`<button key=${u.id} onClick=${()=>groupMode?togglePicked(u):startDirect(u)}><span class="chatavatar">${u.avatar_url?html`<img src=${u.avatar_url} alt=""/>`:(u.display_name||u.username||'?')[0].toUpperCase()}</span><span class="grow"><b>${u.display_name||u.username}</b><span class="mu">@${u.username}</span></span>${groupMode&&html`<span>${picked.some(x=>x.id===u.id)?'✓':'＋'}</span>`}</button>`)}</div>`}</div>
+ ${loading?html`<p class="mu" style=${{padding:18}}>Загружаем диалоги…</p>`:convs.length?convs.map(c=>html`<button key=${c.id} class=${'chatitem'+(active?.id===c.id?' on':'')} onClick=${()=>setActive(c)}><span class="chatavatar">${c.avatar_url?html`<img src=${c.avatar_url} alt=""/>`:c.kind==='group'?'◉':(c.title_display||'?')[0].toUpperCase()}</span><span class="chatpreview"><b>${c.title_display}</b><span>${c.last?(c.last.sender_id===uid?'Вы: ':'')+(c.last.message_type==='text'?c.last.body:c.last.message_type==='voice'?'Голосовое сообщение':'Вложение'):c.kind==='group'?'Группа':'Начните общение'}</span></span><span class="lab">${c.last?fmt(c.last.created_at):''}</span></button>`):html`<div class="chatempty"><b>Пока нет диалогов</b><p>Найдите пользователя по нику или создайте группу.</p></div>`}</aside>
+ <section class="chatpanel chatroom">${active?html`<header class="chatroomhead"><button class="ib chatback" onClick=${()=>setActive(null)}>←</button><span class="chatavatar">${active.avatar_url?html`<img src=${active.avatar_url} alt=""/>`:active.kind==='group'?'◉':(active.title_display||'?')[0].toUpperCase()}</span><div class="grow"><b>${active.title_display}</b><div class="lab">${active.kind==='group'?'Группа · '+active.members.length+' участников':'Личный диалог'}</div></div><button class="ib" title="Обновить" onClick=${()=>loadMessages(active.id)}>↻</button></header>
+ <div class="chatmessages">${messages.length?messages.map(m=>html`<article key=${m.id} class=${'chatbubble'+(m.sender_id===uid?' mine':'')}><div class="lab" style=${{marginBottom:4}}>${m.sender_id===uid?'Вы':m.author.display_name||m.author.username||'Участник'}</div>${m.message_type==='image'&&m.attachment?.url?html`<a href=${m.attachment.url} target="_blank" rel="noopener"><img src=${m.attachment.url} alt=${m.attachment.file_name}/></a>`:m.message_type==='video'&&m.attachment?.url?html`<video src=${m.attachment.url} controls playsInline/>`:m.message_type==='voice'&&m.attachment?.url?html`<audio src=${m.attachment.url} controls/>`:m.message_type==='file'&&m.attachment?.url?html`<a href=${m.attachment.url} target="_blank" rel="noopener" download>${m.attachment.file_name||m.body}</a>`:html`<div>${m.body}</div>`}<div class="chatmeta"><span>${fmt(m.created_at)}</span>${m.edited_at?' · изменено':''}</div><div class="chattools">${['❤️','👍','😂','🔥'].map(em=>html`<button key=${em} onClick=${()=>react(m,em)}>${em} ${m.reactions.filter(r=>r.emoji===em).length||''}</button>`)}</div></article>`):html`<div class="chatempty"><b>Это начало диалога</b><p>Напишите первое сообщение.</p></div>`}</div>
+ <form class="chatcomposer" onSubmit=${sendText}><label class="ib" title="Прикрепить файл"><span>＋</span><input type="file" hidden accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,audio/webm,audio/ogg,audio/mp4,application/pdf,text/plain" onChange=${e=>{const f=e.target.files?.[0];if(f)sendFile(f);e.target.value=''}}/></label><textarea value=${draft} maxLength="5000" placeholder="Сообщение…" onChange=${e=>setDraft(e.target.value)} onKeyDown=${e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendText()}}}/><button type="button" class="ib" title=${recording?'Остановить запись':'Записать голосовое'} onClick=${recording?stopRecording:startRecording}>${recording?'■':'🎙'}</button><button class="cbtn" disabled=${busy||!draft.trim()}>Отправить</button></form>`:html`<div class="chatempty"><div class="hd" style=${{fontSize:54}}>M.</div><b>Выберите диалог</b><p>Личные и групповые сообщения MOMENT будут отображаться здесь.</p></div>`}</section></div>
+ <p class="mu" style=${{marginTop:12,fontSize:12}}>Не отправляйте незнакомым людям личные данные, адрес, школу, пароли или коды. Если общение неприятно, прекратите его и обратитесь к взрослому, которому доверяете.</p></section>`;
+};
+
+function App(){
+ const rt=()=>{const r=location.hash.slice(1);return NAV.some(n=>n[0]===r)?r:'home'};
+ const [route,setRoute]=useState(rt),[theme,setTheme]=useState(()=>ls('mo-theme',matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')),[calm,setCalm]=useState(()=>ls('mo-calm2',false));
+ const [session,setSession]=useState(null),[authReady,setAuthReady]=useState(false),[authOpen,setAuthOpen]=useState(true),[recovery,setRecovery]=useState(false),[profile,setProfile]=useState(null),[citiesDb,setCitiesDb]=useState([]),[comments,setComments]=useState({}),[eventComments,setEventComments]=useState({}),[eventLikes,setEventLikes]=useState({});
+ const [hid,setHid]=useState(()=>ls('mo-hid',{})),[ints,setInts]=useState(()=>ls('mo-ints',[])),[gm,setGm]=useState(()=>ls('mo-gm',{xp:0,days:[],c:{}})),[posts,setPosts]=useState([]),[ev,setEv]=useState([]),[lk,setLk]=useState({}),[rp,setRp]=useState({}),[sd,setSd]=useState({}),[jn,setJn]=useState({}),[col,setCol]=useState({}),[q,setQ]=useState(''),[bell,setBell]=useState(false),[nt,setNt]=useState([]),[ts,setTs]=useState(null),[spl,setSpl]=useState(true),[cr,setCr]=useState(false),[pf,setPf]=useState(null),[duet,setDuet]=useState(null),[fw,setFw]=useState({}),[authBusy,setAuthBusy]=useState(false);
+ useEffect(()=>{let live=true;sb.auth.getSession().then(({data})=>{if(!live)return;setSession(data.session);setAuthOpen(!data.session);setAuthReady(true)});const {data:{subscription}}=sb.auth.onAuthStateChange((event,s)=>{setSession(s);if(event==='PASSWORD_RECOVERY'){setRecovery(true);setAuthOpen(true)}else{setRecovery(false);setAuthOpen(!s)}setAuthReady(true)});return()=>{live=false;subscription.unsubscribe()}},[]);
+ const uid=session?.user?.id;
+ useEffect(()=>{if(!uid)return;let live=true;(async()=>{
+  try{
+   const [{data:pr,error:pe},{data:cityRows,error:ce},{data:postRows,error:po},{data:eventRows,error:ee},{data:followRows},{data:myReactions},{data:myReposts},{data:mySaved},{data:myMembers},{data:myInterests},{data:myCollections},{data:notices},{data:allMembers},{data:allEventReactions},{data:myEventReactions},{data:eventCommentRows}]=await Promise.all([
+    sb.from('profiles').select('id,username,display_name,bio,avatar_path,cover_path,city_id,show_area,level,xp').eq('id',uid).maybeSingle(),
+    sb.from('cities').select('id,name,country,lat,lon').order('name'),
+    sb.from('posts').select('*').order('created_at',{ascending:false}).limit(120),
+    sb.from('events').select('*').gt('ends_at',new Date().toISOString()).order('ends_at').limit(60),
+    sb.from('followers').select('followee_id').eq('follower_id',uid),
+    sb.from('reactions').select('post_id').eq('user_id',uid).eq('kind','like'),
+    sb.from('reactions').select('post_id').eq('user_id',uid).eq('kind','repost'),
+    sb.from('saved_posts').select('post_id').eq('user_id',uid),
+    sb.from('event_members').select('event_id').eq('user_id',uid),
+    sb.from('user_interests').select('interest').eq('user_id',uid),
+    sb.from('collected_cities').select('city_id').eq('user_id',uid),
+    sb.from('notifications').select('id,kind,payload,read_at,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(30),
+    sb.from('event_members').select('event_id,user_id'),
+    sb.from('event_reactions').select('event_id'),
+    sb.from('event_reactions').select('event_id').eq('user_id',uid),
+    sb.from('event_comments').select('id,event_id,author_id,body,created_at').order('created_at').limit(300)
+   ]);
+   if(pe)throw pe;if(ce)throw ce;if(po)throw po;if(ee)throw ee;
+   const cities=cityRows||[];if(!live)return;setCitiesDb(cities);
+   const me=pr?{...pr,city:cities.find(c=>c.id===pr.city_id)?.name||'',avatar_url:pr.avatar_path?sb.storage.from('photos').getPublicUrl(pr.avatar_path).data.publicUrl:null}:null;setProfile(me);
+   const authorIds=[...new Set((postRows||[]).map(p=>p.author_id))];
+   const {data:authors}=authorIds.length?await sb.from('profiles').select('id,username,display_name,avatar_path').in('id',authorIds):{data:[]};
+   const authorMap=Object.fromEntries((authors||[]).map(a=>[a.id,a]));
+   const postIds=(postRows||[]).map(p=>p.id);
+   const [{data:reacts},{data:coms},{data:evComs}]=await Promise.all([
+    postIds.length?sb.from('reactions').select('post_id,user_id,kind').in('post_id',postIds):Promise.resolve({data:[]}),
+    postIds.length?sb.from('comments').select('id,post_id,author_id,body,created_at').in('post_id',postIds).order('created_at'):Promise.resolve({data:[]}),
+    Promise.resolve({data:[]})
+   ]);
+   const commentAuthors=[...new Set((coms||[]).map(c=>c.author_id))];const {data:ca}=commentAuthors.length?await sb.from('profiles').select('id,username,display_name').in('id',commentAuthors):{data:[]};const caMap=Object.fromEntries((ca||[]).map(a=>[a.id,a.display_name||a.username]));
+   const reactCount={},repostCount={};(reacts||[]).forEach(r=>{if(r.kind==='repost')repostCount[r.post_id]=(repostCount[r.post_id]||0)+1;else reactCount[r.post_id]=(reactCount[r.post_id]||0)+1});
+   const cm={};(coms||[]).forEach(c=>(cm[c.post_id]=cm[c.post_id]||[]).push({id:c.id,body:c.body,author:caMap[c.author_id]||'Участник'}));setComments(cm);
+   const evCommentAuthors=[...new Set((eventCommentRows||[]).map(c=>c.author_id))];const {data:eca}=evCommentAuthors.length?await sb.from('profiles').select('id,username,display_name').in('id',evCommentAuthors):{data:[]};const ecaMap=Object.fromEntries((eca||[]).map(a=>[a.id,a.display_name||a.username]));const ecm={};(eventCommentRows||[]).forEach(c=>(ecm[c.event_id]=ecm[c.event_id]||[]).push({id:c.id,body:c.body,author:ecaMap[c.author_id]||'Участник'}));setEventComments(ecm);const evReactCounts={};(allEventReactions||[]).forEach(x=>evReactCounts[x.event_id]=(evReactCounts[x.event_id]||0)+1);setEventLikes(Object.fromEntries((myEventReactions||[]).map(x=>[x.event_id,true])));
+   const mapped=(postRows||[]).map(p=>{const c=cities.find(x=>x.id===p.city_id),a=authorMap[p.author_id]||{};return{id:p.id,u:a.display_name||a.username||'Участник',h:a.username||'user',avatar:a.avatar_path?sb.storage.from('photos').getPublicUrl(a.avatar_path).data.publicUrl:null,when:timeAgo(p.created_at),c:c?.name||p.area_label||'Область скрыта',cn:c?.country||'',a:p.area_label||'',lo:c?.lon==null?null:Number(c.lon),la:c?.lat==null?null:Number(c.lat),g:p.area_label?1:0,d:(me?.city&&me.city===c?.name)?0.5:999,cat:catFromDb(p.category),wx:p.weather||'',tod:p.time_of_day||'',duet:p.duet_post_id?(authorMap[(postRows||[]).find(x=>x.id===p.duet_post_id)?.author_id]?.username||''):null,img2:p.image_after_path?sb.storage.from('moment-media').getPublicUrl(p.image_after_path).data.publicUrl:null,img:p.image_path?sb.storage.from('moment-media').getPublicUrl(p.image_path).data.publicUrl:null,t:p.body,l:reactCount[p.id]||0,r:repostCount[p.id]||0,k:(cm[p.id]||[]).length,end:p.expires_at?new Date(p.expires_at).getTime():null,created_at:p.created_at,author_id:p.author_id,city_id:p.city_id};});
+   setPosts(mapped);const memberCounts={};(allMembers||[]).forEach(x=>memberCounts[x.event_id]=(memberCounts[x.event_id]||0)+1);setEv((eventRows||[]).map(e=>{const c=cities.find(x=>x.id===e.city_id);return{id:e.id,t:e.title,d:e.description,a:e.area_label||c?.name||'Область скрыта',lo:c?.lon==null?null:Number(c.lon),la:c?.lat==null?null:Number(c.lat),n:memberCounts[e.id]||0,likes:evReactCounts[e.id]||0,st:new Date(e.created_at).getTime(),end:new Date(e.ends_at).getTime(),img:e.image_path?sb.storage.from('moment-media').getPublicUrl(e.image_path).data.publicUrl:null,author_id:e.author_id}}));
+   setLk(Object.fromEntries((myReactions||[]).map(x=>[x.post_id,true])));setRp(Object.fromEntries((myReposts||[]).map(x=>[x.post_id,true])));setSd(Object.fromEntries((mySaved||[]).map(x=>[x.post_id,true])));setJn(Object.fromEntries((myMembers||[]).map(x=>[x.event_id,true])));
+   const followIds=(followRows||[]).map(x=>x.followee_id);if(followIds.length){const {data:fp}=await sb.from('profiles').select('id,username').in('id',followIds);setFw(Object.fromEntries((fp||[]).map(x=>[x.username,true])))}else setFw({});
+   setInts((myInterests||[]).map(x=>catFromDb(x.interest)));setCol(Object.fromEntries((myCollections||[]).map(x=>[cities.find(c=>c.id===x.city_id)?.name,true]).filter(x=>x[0])));setNt((notices||[]).map(x=>({id:x.id,t:x.kind==='reactions'?'Кто-то отметил ваш момент':x.kind==='comments'?'Новый комментарий':x.kind,payload:x.payload,r:!!x.read_at})));
+  }catch(e){console.error('MOMENT sync:',e);setTs('Не удалось синхронизировать данные: '+(e.message||'ошибка'))}
+ })();return()=>{live=false}},[uid]);
+ useEffect(()=>{if(!uid)return;const channel=sb.channel('moment-live-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'posts'},()=>refreshPosts()).on('postgres_changes',{event:'*',schema:'public',table:'comments'},()=>refreshComments()).on('postgres_changes',{event:'*',schema:'public',table:'events'},()=>refreshEvents()).on('postgres_changes',{event:'*',schema:'public',table:'reactions'},()=>refreshPosts()).on('postgres_changes',{event:'*',schema:'public',table:'event_members'},()=>refreshEvents()).on('postgres_changes',{event:'*',schema:'public',table:'event_reactions'},()=>refreshEvents()).on('postgres_changes',{event:'*',schema:'public',table:'event_comments'},()=>refreshEventComments()).on('postgres_changes',{event:'*',schema:'public',table:'notifications',filter:'user_id=eq.'+uid},async()=>{const {data}=await sb.from('notifications').select('id,kind,payload,read_at,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(30);if(data)setNt(data.map(x=>({id:x.id,t:x.kind==='reactions'?'Кто-то отметил ваш момент':x.kind==='comments'?'Новый комментарий':x.kind,payload:x.payload,r:!!x.read_at})));}).subscribe();return()=>{sb.removeChannel(channel)}},[uid,citiesDb,profile]);
+ const refreshPosts=async()=>{const {data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(120);if(!data)return;const cities=citiesDb;const ids=[...new Set(data.flatMap(x=>[x.author_id,...(x.duet_post_id?[data.find(d=>d.id===x.duet_post_id)?.author_id].filter(Boolean):[])]))];const {data:authors}=ids.length?await sb.from('profiles').select('id,username,display_name,avatar_path').in('id',ids):{data:[]};const am=Object.fromEntries((authors||[]).map(x=>[x.id,x]));const postById=Object.fromEntries(data.map(x=>[x.id,x]));const ids0=data.map(x=>x.id);const [{data:reactions},{data:commentRows}]=await Promise.all([ids0.length?sb.from('reactions').select('post_id,user_id,kind').in('post_id',ids0):Promise.resolve({data:[]}),ids0.length?sb.from('comments').select('post_id').in('post_id',ids0):Promise.resolve({data:[]})]);const cnt={},rc={},kc={};(reactions||[]).forEach(x=>{if(x.kind==='repost')rc[x.post_id]=(rc[x.post_id]||0)+1;else cnt[x.post_id]=(cnt[x.post_id]||0)+1});(commentRows||[]).forEach(x=>kc[x.post_id]=(kc[x.post_id]||0)+1);setLk(Object.fromEntries((reactions||[]).filter(x=>x.kind==='like'&&x.user_id===uid).map(x=>[x.post_id,true])));setRp(Object.fromEntries((reactions||[]).filter(x=>x.kind==='repost'&&x.user_id===uid).map(x=>[x.post_id,true])));setPosts(data.map(p=>{const c=cities.find(x=>x.id===p.city_id),a=am[p.author_id]||{},dp=p.duet_post_id?postById[p.duet_post_id]:null,duet=dp?am[dp.author_id]?.username||'':null;return{id:p.id,u:a.display_name||a.username||'Участник',h:a.username||'user',avatar:a.avatar_path?sb.storage.from('photos').getPublicUrl(a.avatar_path).data.publicUrl:null,when:timeAgo(p.created_at),c:c?.name||p.area_label||'Область скрыта',cn:c?.country||'',a:p.area_label||'',lo:c?.lon==null?null:Number(c.lon),la:c?.lat==null?null:Number(c.lat),d:profile?.city===c?.name?0.5:999,cat:catFromDb(p.category),wx:p.weather||'',tod:p.time_of_day||'',duet,img2:p.image_after_path?sb.storage.from('moment-media').getPublicUrl(p.image_after_path).data.publicUrl:null,img:p.image_path?sb.storage.from('moment-media').getPublicUrl(p.image_path).data.publicUrl:null,t:p.body,l:cnt[p.id]||0,r:rc[p.id]||0,k:kc[p.id]||0,end:p.expires_at?new Date(p.expires_at).getTime():null,created_at:p.created_at,author_id:p.author_id,city_id:p.city_id}}))};
+ const refreshComments=async()=>{const {data}=await sb.from('comments').select('id,post_id,author_id,body').order('created_at').limit(400);if(!data)return;const aids=[...new Set(data.map(x=>x.author_id))];const {data:authors}=aids.length?await sb.from('profiles').select('id,username,display_name').in('id',aids):{data:[]};const am=Object.fromEntries((authors||[]).map(x=>[x.id,x.display_name||x.username]));const cm={};data.forEach(c=>(cm[c.post_id]=cm[c.post_id]||[]).push({id:c.id,body:c.body,author:am[c.author_id]||'Участник'}));setComments(cm)};
+ const refreshEventComments=async()=>{const {data}=await sb.from('event_comments').select('id,event_id,author_id,body').order('created_at').limit(300);if(!data)return;const ids=[...new Set(data.map(x=>x.author_id))];const {data:authors}=ids.length?await sb.from('profiles').select('id,username,display_name').in('id',ids):{data:[]};const am=Object.fromEntries((authors||[]).map(x=>[x.id,x.display_name||x.username]));const cm={};data.forEach(c=>(cm[c.event_id]=cm[c.event_id]||[]).push({id:c.id,body:c.body,author:am[c.author_id]||'Участник'}));setEventComments(cm)};
+ const refreshEvents=async()=>{const {data}=await sb.from('events').select('*').gt('ends_at',new Date().toISOString()).order('ends_at');if(!data)return;const ids=data.map(x=>x.id);const [{data:members},{data:reactions}]=await Promise.all([ids.length?sb.from('event_members').select('event_id,user_id').in('event_id',ids):Promise.resolve({data:[]}),ids.length?sb.from('event_reactions').select('event_id').in('event_id',ids):Promise.resolve({data:[]})]);const mc={},rc={};(members||[]).forEach(x=>mc[x.event_id]=(mc[x.event_id]||0)+1);(reactions||[]).forEach(x=>rc[x.event_id]=(rc[x.event_id]||0)+1);setEv(data.map(e=>{const c=citiesDb.find(x=>x.id===e.city_id);return{id:e.id,t:e.title,d:e.description,a:e.area_label||c?.name||'Область скрыта',lo:c?.lon==null?null:Number(c.lon),la:c?.lat==null?null:Number(c.lat),n:mc[e.id]||0,likes:rc[e.id]||0,st:new Date(e.created_at).getTime(),end:new Date(e.ends_at).getTime(),img:e.image_path?sb.storage.from('moment-media').getPublicUrl(e.image_path).data.publicUrl:null,author_id:e.author_id}}))};
+ useEffect(()=>{sv('mo-gm',gm);sv('mo-hid',hid)},[gm,hid]);
+ useEffect(()=>{if(!ts)return;const t=setTimeout(()=>setTs(null),4200);return()=>clearTimeout(t)},[ts]);
+ useEffect(()=>{const m=()=>{const t=document.querySelector('.top'),s=document.querySelector('.strip');if(t&&s)document.documentElement.style.setProperty('--hh',t.offsetHeight+s.offsetHeight+'px')};m();addEventListener('resize',m);const t=setTimeout(m,600);return()=>{removeEventListener('resize',m);clearTimeout(t)}},[route]);
+ useEffect(()=>{const f=()=>setRoute(rt());addEventListener('hashchange',f);const t=setTimeout(()=>setSpl(false),1800);return()=>{removeEventListener('hashchange',f);clearTimeout(t)}},[]);
+ useEffect(()=>{const e=document.documentElement;e.classList.add('tt');e.dataset.theme=theme;sv('mo-theme',theme);const t=setTimeout(()=>e.classList.remove('tt'),600);return()=>clearTimeout(t)},[theme]);
+ useEffect(()=>{document.documentElement.toggleAttribute('data-calm',calm);sv('mo-calm2',calm)},[calm]);
+ useEffect(()=>{const b=document.querySelector('.rail .on');b&&b.scrollIntoView({inline:'center',block:'nearest'})},[route]);
+ const go=r=>{location.hash=r;setRoute(r);window.scrollTo(0,0)};
+ const tog=set=>id=>set(o=>({...o,[id]:!o[id]}));
+ const act=(k,x)=>setGm(g=>{const t=today(),c=g.day===t?{...g.c}:{};c[k]=(c[k]||0)+1;return{...g,day:t,c,days:g.days.includes(t)?g.days:[...g.days,t].slice(-60),xp:g.xp+x}});
+ const vis=posts.filter(p=>!hid['p'+p.id]&&!hid['u'+p.h]);
+ const soon=[...ev].filter(e=>e.end>Date.now()).sort((a,b)=>a.end-b.end)[0];
+ const onC=async c=>{const city=citiesDb.find(x=>x.name===c);if(!city)return;try{if(!col[c]){const {error}=await sb.from('collected_cities').insert({user_id:uid,city_id:city.id});if(error&&error.code!=='23505')throw error}else{const {error}=await sb.from('collected_cities').delete().eq('user_id',uid).eq('city_id',city.id);if(error)throw error}setCol(o=>({...o,[c]:!o[c]}));if(!col[c])act('collect',5)}catch(e){setTs(e.message)}};
+ const onLike=async id=>{if(!uid)return setAuthOpen(true);const was=!!lk[id];setLk(o=>({...o,[id]:!was}));setPosts(ps=>ps.map(p=>p.id===id?{...p,l:Math.max(0,(p.l||0)+(was?-1:1))}:p));try{const q0=was?sb.from('reactions').delete().eq('post_id',id).eq('user_id',uid).eq('kind','like'):sb.from('reactions').insert({post_id:id,user_id:uid,kind:'like'});const {error}=await q0;if(error)throw error;if(!was)act('like',1)}catch(e){setLk(o=>({...o,[id]:was}));setPosts(ps=>ps.map(p=>p.id===id?{...p,l:Math.max(0,(p.l||0)+(was?1:-1))}:p));setTs(e.message)}};
+ const onRepost=async id=>{if(!uid)return setAuthOpen(true);const was=!!rp[id];setRp(o=>({...o,[id]:!was}));setPosts(ps=>ps.map(p=>p.id===id?{...p,r:Math.max(0,(p.r||0)+(was?-1:1))}:p));try{const q0=was?sb.from('reactions').delete().eq('post_id',id).eq('user_id',uid).eq('kind','repost'):sb.from('reactions').insert({post_id:id,user_id:uid,kind:'repost'});const {error}=await q0;if(error)throw error}catch(e){setRp(o=>({...o,[id]:was}));setPosts(ps=>ps.map(p=>p.id===id?{...p,r:Math.max(0,(p.r||0)+(was?1:-1))}:p));setTs(e.message)}};
+ const onSavePost=async id=>{if(!uid)return setAuthOpen(true);const was=!!sd[id];setSd(o=>({...o,[id]:!was}));try{const q0=was?sb.from('saved_posts').delete().eq('post_id',id).eq('user_id',uid):sb.from('saved_posts').insert({post_id:id,user_id:uid});const {error}=await q0;if(error)throw error}catch(e){setSd(o=>({...o,[id]:was}));setTs(e.message)}};
+ const onComment=async(id,body)=>{if(!uid)return setAuthOpen(true);try{const {error}=await sb.from('comments').insert({post_id:id,author_id:uid,body});if(error)throw error;await refreshComments();setPosts(ps=>ps.map(p=>p.id===id?{...p,k:(p.k||0)+1}:p))}catch(e){setTs(e.message)}};
+ const onDeletePost=async id=>{if(!confirm('Удалить этот момент? Это действие нельзя отменить.'))return;try{const {data:row,error:re}=await sb.from('posts').select('image_path,image_after_path').eq('id',id).eq('author_id',uid).single();if(re)throw re;const {error}=await sb.from('posts').delete().eq('id',id).eq('author_id',uid);if(error)throw error;const paths=[row.image_path,row.image_after_path].filter(Boolean);if(paths.length)await sb.storage.from('moment-media').remove(paths);setPosts(ps=>ps.filter(p=>p.id!==id));setComments(o=>{const n={...o};delete n[id];return n});setTs('Момент удалён')}catch(e){setTs('Не удалось удалить публикацию: '+e.message)}};
+ const onReport=async id=>{const reason=prompt('Почему вы хотите пожаловаться? (до 300 символов)');if(reason===null)return;try{const {error}=await sb.from('reports').insert({reporter_id:uid,post_id:id,reason:reason.slice(0,300)});if(error)throw error;setHid(o=>({...o,['p'+id]:1}));setTs('Жалоба отправлена. Публикация скрыта у вас.')}catch(e){setTs('Не удалось отправить жалобу: '+e.message)}};
+ const resolveProfileId=async username=>{const cached=posts.find(p=>p.h===username)?.author_id;if(cached)return cached;const {data,error}=await sb.from('profiles').select('id').eq('username',username).maybeSingle();if(error)throw error;return data?.id||null};
+ const onFollow=async username=>{if(!uid)return setAuthOpen(true);const was=!!fw[username];setFw(o=>({...o,[username]:!was}));try{const target=await resolveProfileId(username);if(!target||target===uid)throw new Error('Профиль не найден');const q0=was?sb.from('followers').delete().eq('follower_id',uid).eq('followee_id',target):sb.from('followers').insert({follower_id:uid,followee_id:target});const {error}=await q0;if(error)throw error}catch(e){setFw(o=>({...o,[username]:was}));setTs('Не удалось изменить подписку: '+e.message)}};
+ const onBlock=async username=>{if(!uid)return setAuthOpen(true);const was=!!hid['u'+username];setHid(o=>({...o,['u'+username]:!was}));try{const target=await resolveProfileId(username);if(!target||target===uid)throw new Error('Профиль не найден');const q0=was?sb.from('blocks').delete().eq('blocker_id',uid).eq('blocked_id',target):sb.from('blocks').insert({blocker_id:uid,blocked_id:target});const {error}=await q0;if(error)throw error}catch(e){setHid(o=>({...o,['u'+username]:was}));setTs('Не удалось изменить блокировку: '+e.message)}};
+ const onJoin=async id=>{if(!uid)return setAuthOpen(true);const was=!!jn[id];setJn(o=>({...o,[id]:!was}));try{const q0=was?sb.from('event_members').delete().eq('event_id',id).eq('user_id',uid):sb.from('event_members').insert({event_id:id,user_id:uid});const {error}=await q0;if(error)throw error}catch(e){setJn(o=>({...o,[id]:was}));setTs(e.message)}};
+ const onDeleteEvent=async id=>{if(!confirm('Удалить это событие?'))return;try{const {data:row,error:re}=await sb.from('events').select('image_path').eq('id',id).eq('author_id',uid).single();if(re)throw re;const {error}=await sb.from('events').delete().eq('id',id).eq('author_id',uid);if(error)throw error;if(row.image_path)await sb.storage.from('moment-media').remove([row.image_path]);setEv(es=>es.filter(e=>e.id!==id));setTs('Событие удалено')}catch(e){setTs('Не удалось удалить событие: '+e.message)}};
+ const onEventComment=async(id,body)=>{if(!uid)return setAuthOpen(true);try{const {error}=await sb.from('event_comments').insert({event_id:id,author_id:uid,body});if(error)throw error;const {data}=await sb.from('event_comments').select('id,body,author_id').eq('event_id',id).order('created_at');const ids=[...new Set((data||[]).map(x=>x.author_id))];const {data:as}=ids.length?await sb.from('profiles').select('id,username,display_name').in('id',ids):{data:[]};const am=Object.fromEntries((as||[]).map(x=>[x.id,x.display_name||x.username]));setEventComments(o=>({...o,[id]:(data||[]).map(x=>({...x,author:am[x.author_id]||'Участник'}))}))}catch(e){setTs(e.message)}};
+ const onEventLike=async id=>{if(!uid)return setAuthOpen(true);const was=!!eventLikes[id];setEventLikes(o=>({...o,[id]:!was}));setEv(es=>es.map(e=>e.id===id?{...e,likes:Math.max(0,(e.likes||0)+(was?-1:1))}:e));try{const q0=was?sb.from('event_reactions').delete().eq('event_id',id).eq('user_id',uid):sb.from('event_reactions').insert({event_id:id,user_id:uid});const {error}=await q0;if(error)throw error}catch(e){setEventLikes(o=>({...o,[id]:was}));setEv(es=>es.map(x=>x.id===id?{...x,likes:Math.max(0,(x.likes||0)+(was?1:-1))}:x));setTs(e.message)}};
+ const onProfileSave=async me=>{try{const city=citiesDb.find(x=>x.name===me.c);const {error}=await sb.from('profiles').update({display_name:me.n.trim().slice(0,60),bio:me.b.trim().slice(0,300),city_id:city?.id||null}).eq('id',uid);if(error)throw error;setProfile(o=>({...o,display_name:me.n,bio:me.b,city:me.c,city_id:city?.id||null}));setTs('Профиль сохранён')}catch(e){setTs('Не удалось сохранить профиль: '+e.message)}};
+ const onAvatar=async file=>{try{if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw new Error('Выберите JPG, PNG или WebP до 5 МБ');const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg',path=uid+'/avatar/'+crypto.randomUUID()+'.'+ext;const {error}=await sb.storage.from('photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;const {error:pe}=await sb.from('profiles').update({avatar_path:path}).eq('id',uid);if(pe)throw pe;const url=sb.storage.from('photos').getPublicUrl(path).data.publicUrl;setProfile(o=>({...o,avatar_path:path,avatar_url:url}));setTs('Фото профиля обновлено')}catch(e){setTs(e.message)}};
+ const onPost=async p=>{let image_path=null,image_after_path=null;try{image_path=await mediaUpload(p.img,uid);image_after_path=await mediaUpload(p.img2,uid);const city=citiesDb.find(x=>x.name===p.c);const payload={author_id:uid,body:p.t,category:catToDb(p.cat),image_path,image_after_path,duet_post_id:p.duet_id||null,weather:p.wx||null,time_of_day:p.tod||null,city_id:city?.id||null,area_label:p.a||null,expires_at:p.end?new Date(p.end).toISOString():null};const {data,error}=await sb.from('posts').insert(payload).select('*').single();if(error)throw error;const author=profile||{};const mapped={id:data.id,u:author.display_name||author.username,h:author.username,when:'сейчас',c:city?.name||p.a||'Область скрыта',cn:city?.country||'',a:p.a||'',lo:city?.lon==null?null:Number(city.lon),la:city?.lat==null?null:Number(city.lat),d:0.5,cat:p.cat,img:image_path?sb.storage.from('moment-media').getPublicUrl(image_path).data.publicUrl:null,img2:image_after_path?sb.storage.from('moment-media').getPublicUrl(image_after_path).data.publicUrl:null,t:p.t,wx:p.wx,tod:p.tod,duet:p.duet,l:0,r:0,k:0,end:p.end||null,author_id:uid,city_id:city?.id};setPosts(o=>[mapped,...o]);act('post',10);setCr(false);setDuet(null);go('home')}catch(e){const paths=[image_path,image_after_path].filter(Boolean);if(paths.length)await sb.storage.from('moment-media').remove(paths).catch(()=>{});setTs('Публикация не отправлена: '+e.message)}};
+ const onEvent=async e=>{let image_path=null;try{image_path=await mediaUpload(e.img,uid);const city=citiesDb.find(x=>x.name===e.c);const {data,error}=await sb.from('events').insert({author_id:uid,title:e.t,description:e.d||'',city_id:city?.id||null,area_label:e.a||null,image_path,ends_at:new Date(e.end).toISOString()}).select('*').single();if(error)throw error;await refreshEvents();setCr(false);go('flash')}catch(x){if(image_path&&image_path.startsWith(uid+'/'))await sb.storage.from('moment-media').remove([image_path]).catch(()=>{});setTs('Событие не опубликовано: '+x.message)}};
+ const A={uid,lk,sd,rp,onRepost,onDelete:onDeletePost,onL:onLike,onS:onSavePost,onU:h=>setPf(h),ev,onFind:p=>{act('find',10);setTs('Найден момент: '+p.c)},onDuet:p=>{setDuet(p);setCr(true)},onRep:onReport,fw,ints,onOpen:()=>act('open',2),q,comments,onComment};
+ const view=route==='messages'?html`<${Messenger} uid=${uid} profile=${profile} onToast=${setTs}/>`
+  :route==='home'?html`<${Home} posts=${vis} ...${A}/>`
+  :route==='explore'?html`<${Explore} posts=${vis} col=${col} onC=${onC} go=${go} ev=${ev} ints=${ints}/>`
+  :route==='nearby'?html`<${Near} posts=${vis} myCity=${profile?.city||''} ...${A}/>`
+  :route==='flash'?html`<${Flash} ev=${ev} jn=${jn} onJ=${onJoin} eventComments=${eventComments} onEventComment=${onEventComment} eventLikes=${eventLikes} onEventLike=${onEventLike} uid=${uid} onDelete=${onDeleteEvent}/>`
+  :route==='global'?html`<${Glob} posts=${vis} onOpen=${A.onOpen} ev=${ev} onFind=${A.onFind}/>`
+  :route==='collection'?html`<${Coll} posts=${vis} col=${col} onC=${onC} gm=${gm} lk=${lk} onMy=${()=>act('mys',15)}/>`
+  :html`<${Prof} theme=${theme} setTheme=${setTheme} calm=${calm} setCalm=${setCalm} posts=${vis} col=${col} fw=${fw} gm=${gm} ints=${ints} setInts=${setInts} profile=${profile} onSave=${onProfileSave} onAvatar=${onAvatar} onSignOut=${()=>sb.auth.signOut()} cities=${citiesDb} onInterestChange=${async next=>{const prev=ints;setInts(next);try{const {error:de}=await sb.from('user_interests').delete().eq('user_id',uid);if(de)throw de;const rows=next.map(x=>({user_id:uid,interest:catToDb(x)}));if(rows.length){const {error:ie}=await sb.from('user_interests').insert(rows);if(ie)throw ie}}catch(e){setInts(prev);setTs('Не удалось сохранить интересы: '+e.message)}}}/>`;
+ return html`
+ ${spl&&html`<div class="spl"><div class="lab">Мир происходит прямо сейчас</div><div class="hd"><${Num} n=${100}/>%</div><div class="bar"><i/></div></div>`}
+ <nav class="rail" aria-label="Разделы">${NAV.map(([r,l])=>html`<button key=${r} class=${r===route?'on':''} onClick=${()=>go(r)}>${l}</button>`)}</nav>
+ <div class="main"><header class="top"><b class="wm">MOMENT<i/></b><input class="in" type="search" value=${q} placeholder="Поиск" onChange=${e=>{setQ(e.target.value);if(route!=='home'&&route!=='nearby')go('home')}} aria-label="Поиск"/>
+  <div class="rel"><button class="ib" onClick=${()=>{setBell(!bell);setNt(n=>n.map(x=>({...x,r:1})));if(uid)sb.from('notifications').update({read_at:new Date().toISOString()}).is('read_at',null).eq('user_id',uid)}} aria-label="Уведомления"><${I} n="bell" s=${20}/>${nt.some(x=>!x.r)&&html`<span class="bdg"/>`}</button>${bell&&html`<div class="pop">${nt.length?nt.map(t=>html`<p key=${t.id}>${t.t}</p>`):html`<p class="mu">Пока тихо.</p>`}</div>`}</div>
+  <button class="ib" onClick=${()=>setTheme(theme==='dark'?'light':'dark')} aria-label="Сменить тему"><span class="mo" key=${theme}><${I} n=${theme==='dark'?'sun':'moon'} s=${20}/></span></button>
+  ${uid?html`<button class="userchip" onClick=${()=>go('profile')}><${Av} n=${profile?.display_name||profile?.username||'M'} src=${profile?.avatar_url}/><span>@${profile?.username||'you'}</span></button>`:html`<button class="cbtn" onClick=${()=>setAuthOpen(true)}>Войти</button>`}
+  <button class="cbtn" onClick=${()=>uid?setCr(true):setAuthOpen(true)}>Создать</button></header><${Strip}/>
+  ${ts&&html`<div class="toast" key=${ts}>${ts}</div>`}${soon&&route!=='flash'&&html`<button class="isl" key=${soon.id} onClick=${()=>go('flash')}><span>Flash</span><b>${soon.t}</b><${Cd} end=${soon.end}/></button>`}${pf&&html`<${PfView} h=${pf} posts=${posts} fw=${fw} onF=${onFollow} close=${()=>setPf(null)} blk=${!!hid['u'+pf]} onB=${onBlock} ints=${ints}/>`}<div class="wipe" key=${'w'+route}/><section class="pg" key=${route}>${view}</section></div>
+ ${cr&&html`<${Create} close=${()=>{setCr(false);setDuet(null)}} duet=${duet} cities=${citiesDb} onPost=${onPost} onEv=${onEvent}/>`}
+ ${authReady&&authOpen&&(!session||recovery)&&html`<${AuthGate} recovery=${recovery} onClose=${()=>{setAuthOpen(false);setRecovery(false)}}/>`}
+ `}
+if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+ReactDOM.createRoot(document.getElementById('r')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
